@@ -3,23 +3,23 @@ import { Leaf, Clock, Heart, Award } from "lucide-react";
 const features = [
   {
     icon: Leaf,
-    title: "Fresh Ingredients",
-    description: "We use only the finest, locally-sourced ingredients"
+    title: "Свежие ингредиенты",
+    description: "Мы используем только лучшие местные продукты"
   },
   {
     icon: Clock,
-    title: "Baked Daily",
-    description: "Everything made fresh each morning"
+    title: "Ежедневная выпечка",
+    description: "Всё готовится свежим каждое утро"
   },
   {
     icon: Heart,
-    title: "Made with Love",
-    description: "Traditional recipes perfected over generations"
+    title: "Сделано с любовью",
+    description: "Традиционные рецепты, совершенствуемые поколениями"
   },
   {
     icon: Award,
-    title: "Award Winning",
-    description: "Recognized for excellence in artisan baking"
+    title: "Награды и признание",
+    description: "Признанное мастерство в авторской выпечке"
   }
 ];
 

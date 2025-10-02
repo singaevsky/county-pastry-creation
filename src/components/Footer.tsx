@@ -8,32 +8,32 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">County Pastry Chef</h3>
             <p className="text-primary-foreground/80">
-              Crafting delicious memories since 1995
+              Создаём вкусные воспоминания с 1995 года
             </p>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">Shop</h4>
+            <h4 className="font-semibold mb-4">Магазин</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Cakes</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Pastries</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Custom Orders</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Gift Cards</a></li>
+              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Торты</a></li>
+              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Выпечка</a></li>
+              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Заказы на заказ</a></li>
+              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Подарочные карты</a></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">About</h4>
+            <h4 className="font-semibold mb-4">О нас</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Our Story</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Recipes</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Contact</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Careers</a></li>
+              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Наша история</a></li>
+              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Рецепты</a></li>
+              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Контакты</a></li>
+              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Вакансии</a></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">Follow Us</h4>
+            <h4 className="font-semibold mb-4">Мы в соцсетях</h4>
             <div className="flex gap-4">
               <a href="#" className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary-foreground/20 transition-colors">
                 <Facebook className="h-5 w-5" />
@@ -49,7 +49,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-primary-foreground/20 pt-8 text-center text-primary-foreground/60">
-          <p>&copy; 2024 County Pastry Chef. All rights reserved.</p>
+          <p>&copy; 2024 County Pastry Chef. Все права защищены.</p>
         </div>
       </div>
     </footer>

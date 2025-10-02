@@ -10,11 +10,11 @@ const Navbar = () => {
             <h1 className="text-2xl font-bold text-primary">County Pastry Chef</h1>
             
             <div className="hidden md:flex items-center gap-6">
-              <a href="#" className="text-foreground hover:text-primary transition-colors">Home</a>
-              <a href="#products" className="text-foreground hover:text-primary transition-colors">Products</a>
-              <a href="#" className="text-foreground hover:text-primary transition-colors">Custom Cakes</a>
-              <a href="#" className="text-foreground hover:text-primary transition-colors">Recipes</a>
-              <a href="#" className="text-foreground hover:text-primary transition-colors">About</a>
+              <a href="#" className="text-foreground hover:text-primary transition-colors">Главная</a>
+              <a href="#products" className="text-foreground hover:text-primary transition-colors">Продукция</a>
+              <a href="#" className="text-foreground hover:text-primary transition-colors">Торты на заказ</a>
+              <a href="#" className="text-foreground hover:text-primary transition-colors">Рецепты</a>
+              <a href="#" className="text-foreground hover:text-primary transition-colors">О нас</a>
             </div>
           </div>
 

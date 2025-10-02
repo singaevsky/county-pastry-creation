@@ -6,20 +6,20 @@ import customCake from "@/assets/custom-cake.jpg";
 const products = [
   {
     image: chocolateCake,
-    title: "Chocolate Dream Cake",
-    description: "Rich, moist chocolate layers with silky ganache frosting",
+    title: "Шоколадный торт мечты",
+    description: "Нежные шоколадные коржи с шелковистым ганашем",
     price: "45.00"
   },
   {
     image: pastries,
-    title: "Artisan Pastry Box",
-    description: "Assorted fresh croissants, danishes, and butter pastries",
+    title: "Набор авторской выпечки",
+    description: "Ассорти свежих круассанов, датских булочек и слоёных изделий",
     price: "28.00"
   },
   {
     image: customCake,
-    title: "Custom Celebration Cake",
-    description: "Personalized multi-tiered cake for your special occasion",
+    title: "Праздничный торт на заказ",
+    description: "Персонализированный многоярусный торт для вашего особого случая",
     price: "120.00"
   }
 ];
@@ -29,9 +29,9 @@ const ProductShowcase = () => {
     <section id="products" className="py-20 gradient-soft">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured Delights</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Наши шедевры</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover our most beloved creations, handcrafted with premium ingredients and passion
+            Откройте для себя наши самые любимые творения, сделанные вручную из отборных ингредиентов с душой
           </p>
         </div>
         

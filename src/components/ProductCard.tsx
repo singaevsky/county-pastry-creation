@@ -26,7 +26,7 @@ const ProductCard = ({ image, title, description, price }: ProductCardProps) => 
           <span className="text-2xl font-bold text-primary">${price}</span>
           <Button size="sm" className="bg-primary hover:bg-primary/90">
             <ShoppingCart className="mr-2 h-4 w-4" />
-            Add to Cart
+            В корзину
           </Button>
         </div>
       </div>
