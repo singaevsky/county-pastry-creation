@@ -5,18 +5,21 @@ import customCake from "@/assets/custom-cake.jpg";
 
 const products = [
   {
+    id: "1",
     image: chocolateCake,
     title: "Шоколадный торт мечты",
     description: "Нежные шоколадные коржи с шелковистым ганашем",
     price: "45.00"
   },
   {
+    id: "2",
     image: pastries,
     title: "Набор авторской выпечки",
     description: "Ассорти свежих круассанов, датских булочек и слоёных изделий",
     price: "28.00"
   },
   {
+    id: "3",
     image: customCake,
     title: "Праздничный торт на заказ",
     description: "Персонализированный многоярусный торт для вашего особого случая",

@@ -1,30 +1,48 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
+  id: string;
   image: string;
   title: string;
   description: string;
   price: string;
 }
 
-const ProductCard = ({ image, title, description, price }: ProductCardProps) => {
+const ProductCard = ({ id, image, title, description, price }: ProductCardProps) => {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart({
+      id,
+      title,
+      price: parseFloat(price),
+      image,
+    });
+  };
+
   return (
     <Card className="overflow-hidden group cursor-pointer shadow-soft hover:shadow-elegant transition-all duration-300">
-      <div className="aspect-square overflow-hidden bg-muted">
-        <img 
-          src={image} 
-          alt={title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-      </div>
+      <Link to={`/product/${id}`}>
+        <div className="aspect-square overflow-hidden bg-muted">
+          <img 
+            src={image} 
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+      </Link>
       <div className="p-6">
-        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <Link to={`/product/${id}`}>
+          <h3 className="text-xl font-semibold mb-2 hover:text-primary transition-colors">{title}</h3>
+        </Link>
         <p className="text-muted-foreground mb-4 line-clamp-2">{description}</p>
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-primary">${price}</span>
-          <Button size="sm" className="bg-primary hover:bg-primary/90">
+          <Button size="sm" onClick={handleAddToCart} className="bg-primary hover:bg-primary/90">
             <ShoppingCart className="mr-2 h-4 w-4" />
             В корзину
           </Button>
