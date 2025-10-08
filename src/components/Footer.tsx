@@ -6,12 +6,12 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">County Pastry Chef</h3>
+            <h3 className="text-xl font-bold mb-4">Уездный кондитер</h3>
             <p className="text-primary-foreground/80">
-              Создаём вкусные воспоминания с 1995 года
+              Создаём вкусные воспоминания с 2023 года
             </p>
           </div>
-          
+
           <div>
             <h4 className="font-semibold mb-4">Магазин</h4>
             <ul className="space-y-2">
@@ -21,7 +21,7 @@ const Footer = () => {
               <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Подарочные карты</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-semibold mb-4">О нас</h4>
             <ul className="space-y-2">
@@ -31,7 +31,7 @@ const Footer = () => {
               <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Вакансии</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-semibold mb-4">Мы в соцсетях</h4>
             <div className="flex gap-4">
@@ -47,9 +47,9 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="border-t border-primary-foreground/20 pt-8 text-center text-primary-foreground/60">
-          <p>&copy; 2024 County Pastry Chef. Все права защищены.</p>
+          <p>&copy; 2025 Уездный кондитер. Все права защищены.</p>
         </div>
       </div>
     </footer>

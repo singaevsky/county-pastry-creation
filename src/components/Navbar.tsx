@@ -56,10 +56,10 @@ const Navbar = () => {
           <div className="flex items-center gap-8">
             <Link to="/">
               <h1 className="text-2xl font-bold text-primary cursor-pointer hover:opacity-80 transition-opacity">
-                County Pastry Chef
+                Уездный кондитер
               </h1>
             </Link>
-            
+
             <div className="hidden md:flex items-center gap-6">
               <Link to="/" className="text-foreground hover:text-primary transition-colors">
                 Главная

@@ -54,7 +54,7 @@ const Auth = () => {
     setIsLoading(true);
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
+
       const { error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
@@ -69,7 +69,7 @@ const Auth = () => {
         title: "Регистрация успешна",
         description: "Проверьте email для подтверждения аккаунта",
       });
-      
+
       reset();
     } catch (error: any) {
       toast({
@@ -99,8 +99,8 @@ const Auth = () => {
     } catch (error: any) {
       toast({
         title: "Ошибка входа",
-        description: error.message === "Invalid login credentials" 
-          ? "Неверный email или пароль" 
+        description: error.message === "Invalid login credentials"
+          ? "Неверный email или пароль"
           : error.message,
         variant: "destructive",
       });
@@ -113,7 +113,7 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-soft px-4">
       <Card className="w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">County Pastry Chef</h1>
+          <h1 className="text-3xl font-bold mb-2">Уездный кондитер</h1>
           <p className="text-muted-foreground">Войдите или создайте аккаунт</p>
         </div>
 
