@@ -6,14 +6,55 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { contactFormSchema, type ContactFormData } from "@/lib/validations";
+import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 
 const Contact = () => {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Сообщение отправлено",
-      description: "Мы свяжемся с вами в ближайшее время",
-    });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+  });
+
+  const onSubmit = async (data: ContactFormData) => {
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([{
+          name: data.name,
+          email: data.email,
+          phone: data.phone || null,
+          message: data.message,
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Сообщение отправлено",
+        description: "Мы свяжемся с вами в ближайшее время",
+      });
+      
+      reset();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось отправить сообщение. Попробуйте позже.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -32,12 +73,18 @@ const Contact = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             <div>
               <h2 className="text-3xl font-bold mb-8">Напишите нам</h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Ваше имя
                   </label>
-                  <Input placeholder="Иван Иванов" required />
+                  <Input 
+                    placeholder="Иван Иванов" 
+                    {...register("name")}
+                  />
+                  {errors.name && (
+                    <p className="text-sm text-destructive mt-1">{errors.name.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -47,15 +94,25 @@ const Contact = () => {
                   <Input
                     type="email"
                     placeholder="ivan@example.com"
-                    required
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Телефон
                   </label>
-                  <Input type="tel" placeholder="+7 (999) 123-45-67" />
+                  <Input 
+                    type="tel" 
+                    placeholder="+7 (999) 123-45-67" 
+                    {...register("phone")}
+                  />
+                  {errors.phone && (
+                    <p className="text-sm text-destructive mt-1">{errors.phone.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -65,16 +122,20 @@ const Contact = () => {
                   <Textarea
                     placeholder="Расскажите, чем мы можем вам помочь..."
                     rows={6}
-                    required
+                    {...register("message")}
                   />
+                  {errors.message && (
+                    <p className="text-sm text-destructive mt-1">{errors.message.message}</p>
+                  )}
                 </div>
 
                 <Button
                   type="submit"
                   size="lg"
                   className="w-full gradient-warm text-white"
+                  disabled={isSubmitting}
                 >
-                  Отправить сообщение
+                  {isSubmitting ? "Отправка..." : "Отправить сообщение"}
                 </Button>
               </form>
             </div>

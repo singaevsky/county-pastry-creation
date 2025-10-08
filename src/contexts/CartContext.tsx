@@ -22,7 +22,10 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem('cart');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     setItems((prev) => {
@@ -71,6 +74,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  // Save to localStorage whenever items change
+  React.useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(items));
+  }, [items]);
 
   return (
     <CartContext.Provider
