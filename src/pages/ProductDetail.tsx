@@ -1,58 +1,76 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, ArrowLeft, Minus, Plus } from "lucide-react";
+import { ShoppingCart, ArrowLeft, Minus, Plus, Loader2 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import chocolateCake from "@/assets/chocolate-cake.jpg";
-import pastries from "@/assets/pastries.jpg";
-import customCake from "@/assets/custom-cake.jpg";
+import { supabase } from "@/lib/supabase";
 
-const productData: Record<string, any> = {
-  "1": {
-    id: "1",
-    image: chocolateCake,
-    title: "Шоколадный торт мечты",
-    description:
-      "Наш знаменитый шоколадный торт - это истинное наслаждение для любителей шоколада. Нежные коржи из темного шоколада, пропитанные кофейным сиропом, чередуются с шелковистым шоколадным ганашем.",
-    price: 45.0,
-    weight: "1.5 кг",
-    ingredients:
-      "Мука высшего сорта, темный шоколад (70% какао), яйца, сахар, сливочное масло, какао-порошок, кофе",
-    category: "Торты",
-  },
-  "2": {
-    id: "2",
-    image: pastries,
-    title: "Набор авторской выпечки",
-    description:
-      "Ассорти из лучших образцов нашей ежедневной выпечки. Хрустящие круассаны, ароматные датские булочки и нежные слоёные изделия.",
-    price: 28.0,
-    weight: "800 г",
-    ingredients:
-      "Мука, масло сливочное, яйца, сахар, дрожжи, молоко, соль, ваниль",
-    category: "Выпечка",
-  },
-  "3": {
-    id: "3",
-    image: customCake,
-    title: "Праздничный торт на заказ",
-    description:
-      "Создайте торт своей мечты! Наши кондитеры воплотят любую вашу фантазию. Многоярусные торты для свадеб, юбилеев и других особых событий.",
-    price: 120.0,
-    weight: "от 3 кг",
-    ingredients: "Индивидуально подбираются согласно вашим пожеланиям",
-    category: "На заказ",
-  },
-};
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  image_url: string;
+}
 
 const ProductDetail = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = id ? productData[id] : null;
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) return;
+      
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error) throw error;
+        setProduct(data);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    for (let i = 0; i < quantity; i++) {
+      addToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image_url,
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="container mx-auto px-4 py-20 flex justify-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -69,15 +87,10 @@ const ProductDetail = () => {
     );
   }
 
-  const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.image,
-      });
-    }
+  const categoryNames: Record<string, string> = {
+    "cakes": "Торты",
+    "pastries": "Выпечка",
+    "custom": "На заказ",
   };
 
   return (
@@ -97,7 +110,7 @@ const ProductDetail = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="aspect-square overflow-hidden rounded-lg bg-muted shadow-elegant">
               <img
-                src={product.image}
+                src={product.image_url}
                 alt={product.title}
                 className="w-full h-full object-cover"
               />
@@ -105,7 +118,7 @@ const ProductDetail = () => {
 
             <div>
               <span className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm mb-4">
-                {product.category}
+                {categoryNames[product.category] || product.category}
               </span>
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
                 {product.title}
@@ -120,16 +133,6 @@ const ProductDetail = () => {
                   <p className="text-muted-foreground leading-relaxed">
                     {product.description}
                   </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Вес</h3>
-                  <p className="text-muted-foreground">{product.weight}</p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Ингредиенты</h3>
-                  <p className="text-muted-foreground">{product.ingredients}</p>
                 </div>
               </div>
 

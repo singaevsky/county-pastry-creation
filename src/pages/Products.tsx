@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -6,79 +6,61 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import chocolateCake from "@/assets/chocolate-cake.jpg";
-import pastries from "@/assets/pastries.jpg";
-import customCake from "@/assets/custom-cake.jpg";
+import { supabase } from "@/lib/supabase";
 
-const categories = ["Все", "Торты", "Выпечка", "На заказ"];
+const categories = ["Все", "cakes", "pastries", "custom"];
+const categoryNames: Record<string, string> = {
+  "Все": "Все",
+  "cakes": "Торты",
+  "pastries": "Выпечка",
+  "custom": "На заказ",
+};
 
-const allProducts = [
-  {
-    id: "1",
-    image: chocolateCake,
-    title: "Шоколадный торт мечты",
-    description: "Нежные шоколадные коржи с шелковистым ганашем",
-    price: 45.0,
-    category: "Торты",
-  },
-  {
-    id: "2",
-    image: pastries,
-    title: "Набор авторской выпечки",
-    description: "Ассорти свежих круассанов, датских булочек и слоёных изделий",
-    price: 28.0,
-    category: "Выпечка",
-  },
-  {
-    id: "3",
-    image: customCake,
-    title: "Праздничный торт на заказ",
-    description:
-      "Персонализированный многоярусный торт для вашего особого случая",
-    price: 120.0,
-    category: "На заказ",
-  },
-  {
-    id: "4",
-    image: chocolateCake,
-    title: "Клубничный торт",
-    description: "Свежая клубника с воздушным кремом",
-    price: 42.0,
-    category: "Торты",
-  },
-  {
-    id: "5",
-    image: pastries,
-    title: "Французские круассаны",
-    description: "Хрустящие слоёные круассаны с маслом",
-    price: 15.0,
-    category: "Выпечка",
-  },
-  {
-    id: "6",
-    image: customCake,
-    title: "Свадебный торт",
-    description: "Элегантный многоярусный торт для вашей свадьбы",
-    price: 250.0,
-    category: "На заказ",
-  },
-];
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  image_url: string;
+}
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("Все");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
 
-  const filteredProducts =
-    selectedCategory === "Все"
-      ? allProducts
-      : allProducts.filter((p) => p.category === selectedCategory);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        let query = supabase.from('products').select('*');
+        
+        if (selectedCategory !== "Все") {
+          query = query.eq('category', selectedCategory);
+        }
 
-  const handleAddToCart = (product: typeof allProducts[0]) => {
+        const { data, error } = await query;
+
+        if (error) throw error;
+        setProducts(data || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedCategory]);
+
+  const handleAddToCart = (product: Product) => {
     addToCart({
       id: product.id,
       title: product.title,
       price: product.price,
-      image: product.image,
+      image: product.image_url,
     });
   };
 
@@ -105,52 +87,62 @@ const Products = () => {
                 onClick={() => setSelectedCategory(category)}
                 className="min-w-[120px]"
               >
-                {category}
+                {categoryNames[category]}
               </Button>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.map((product) => (
-              <Card
-                key={product.id}
-                className="overflow-hidden group cursor-pointer shadow-soft hover:shadow-elegant transition-all duration-300"
-              >
-                <Link to={`/product/${product.id}`}>
-                  <div className="aspect-square overflow-hidden bg-muted">
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                </Link>
-                <div className="p-6">
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Загрузка продуктов...</p>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Продукты не найдены</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {products.map((product) => (
+                <Card
+                  key={product.id}
+                  className="overflow-hidden group cursor-pointer shadow-soft hover:shadow-elegant transition-all duration-300"
+                >
                   <Link to={`/product/${product.id}`}>
-                    <h3 className="text-xl font-semibold mb-2 hover:text-primary transition-colors">
-                      {product.title}
-                    </h3>
+                    <div className="aspect-square overflow-hidden bg-muted">
+                      <img
+                        src={product.image_url}
+                        alt={product.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
                   </Link>
-                  <p className="text-muted-foreground mb-4 line-clamp-2">
-                    {product.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-primary">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    <Button
-                      size="sm"
-                      onClick={() => handleAddToCart(product)}
-                      className="bg-primary hover:bg-primary/90"
-                    >
-                      <ShoppingCart className="mr-2 h-4 w-4" />
-                      В корзину
-                    </Button>
+                  <div className="p-6">
+                    <Link to={`/product/${product.id}`}>
+                      <h3 className="text-xl font-semibold mb-2 hover:text-primary transition-colors">
+                        {product.title}
+                      </h3>
+                    </Link>
+                    <p className="text-muted-foreground mb-4 line-clamp-2">
+                      {product.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-primary">
+                        ${product.price.toFixed(2)}
+                      </span>
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddToCart(product)}
+                        className="bg-primary hover:bg-primary/90"
+                      >
+                        <ShoppingCart className="mr-2 h-4 w-4" />
+                        В корзину
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

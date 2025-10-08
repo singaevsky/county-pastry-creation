@@ -1,14 +1,96 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { supabase } from "@/lib/supabase";
+import { useState, useEffect } from "react";
+import { User } from "@supabase/supabase-js";
+import { toast } from "@/hooks/use-toast";
 
 const Cart = () => {
-  const { items, removeFromCart, updateQuantity, totalPrice, totalItems } =
-    useCart();
+  const { items, removeFromCart, updateQuantity, totalPrice, totalItems, clearCart } = useCart();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleCheckout = async () => {
+    if (!user) {
+      toast({
+        title: "Требуется авторизация",
+        description: "Войдите в аккаунт для оформления заказа",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+
+    setIsCheckingOut(true);
+    try {
+      const deliveryFee = totalPrice >= 50 ? 0 : 5;
+      const total = totalPrice + deliveryFee;
+
+      // Create order
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert([{
+          user_id: user.id,
+          total_amount: total,
+          status: 'pending',
+          customer_name: user.email?.split('@')[0] || 'Customer',
+          customer_email: user.email || '',
+        }])
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = items.map(item => ({
+        order_id: orderData.id,
+        product_id: item.id,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      toast({
+        title: "Заказ оформлен!",
+        description: `Заказ #${orderData.id.slice(0, 8)} успешно создан`,
+      });
+
+      clearCart();
+      navigate("/");
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Ошибка оформления заказа",
+        description: error.message || "Попробуйте позже",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -133,8 +215,13 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <Button size="lg" className="w-full gradient-warm text-white mb-4">
-                  Оформить заказ
+                <Button 
+                  size="lg" 
+                  className="w-full gradient-warm text-white mb-4"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut}
+                >
+                  {isCheckingOut ? "Оформление..." : "Оформить заказ"}
                 </Button>
 
                 <Link to="/products">
