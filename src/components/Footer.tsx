@@ -15,20 +15,20 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Магазин</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Торты</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Выпечка</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Заказы на заказ</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Подарочные карты</a></li>
+              <li><a href="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Торты</a></li>
+              <li><a href="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Выпечка</a></li>
+              <li><a href="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Заказы на заказ</a></li>
+              <li><a href="/cart" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Корзина</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4">О нас</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Наша история</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Рецепты</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Контакты</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Вакансии</a></li>
+              <li><a href="/about" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Наша история</a></li>
+              <li><a href="/recipes" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Рецепты</a></li>
+              <li><a href="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Контакты</a></li>
+              <li><a href="/careers" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Вакансии</a></li>
             </ul>
           </div>
 
