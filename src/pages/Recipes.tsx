@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, Users, ChefHat } from "lucide-react";
 
@@ -63,6 +64,11 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Рецепты"
+        description="Профессиональные кондитерские рецепты от Уездного кондитера. Попробуйте приготовить наши фирменные десерты дома!"
+        keywords="рецепты тортов, кондитерские рецепты, домашняя выпечка, рецепты десертов"
+      />
       <Navbar />
       
       <main className="flex-grow">

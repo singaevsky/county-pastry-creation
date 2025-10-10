@@ -43,10 +43,15 @@ const Products = () => {
 
         const { data, error } = await query;
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching products:', error);
+          setProducts([]);
+          return;
+        }
         setProducts(data || []);
       } catch (error) {
         console.error('Error fetching products:', error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -127,7 +132,7 @@ const Products = () => {
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-primary">
-                        ${product.price.toFixed(2)}
+                        {product.price.toFixed(0)} ₽
                       </span>
                       <Button
                         size="sm"

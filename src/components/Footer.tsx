@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -15,20 +16,20 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Магазин</h4>
             <ul className="space-y-2">
-              <li><a href="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Торты</a></li>
-              <li><a href="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Выпечка</a></li>
-              <li><a href="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Заказы на заказ</a></li>
-              <li><a href="/cart" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Корзина</a></li>
+              <li><Link to="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Торты</Link></li>
+              <li><Link to="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Выпечка</Link></li>
+              <li><Link to="/products" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Заказы на заказ</Link></li>
+              <li><Link to="/cart" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Корзина</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4">О нас</h4>
             <ul className="space-y-2">
-              <li><a href="/about" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Наша история</a></li>
-              <li><a href="/recipes" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Рецепты</a></li>
-              <li><a href="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Контакты</a></li>
-              <li><a href="/careers" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Вакансии</a></li>
+              <li><Link to="/about" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Наша история</Link></li>
+              <li><Link to="/recipes" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Рецепты</Link></li>
+              <li><Link to="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Контакты</Link></li>
+              <li><Link to="/careers" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">Вакансии</Link></li>
             </ul>
           </div>
 

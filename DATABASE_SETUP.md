@@ -5,6 +5,15 @@
 Откройте SQL Editor в вашей Supabase консоли и выполните следующий скрипт:
 
 ```sql
+-- Create newsletter_subscribers table
+create table if not exists public.newsletter_subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text unique not null,
+  name text,
+  subscribed_at timestamptz default now(),
+  created_at timestamptz default now()
+);
+
 -- Create products table
 create table if not exists public.products (
   id uuid primary key default gen_random_uuid(),
@@ -62,11 +71,18 @@ create table if not exists public.order_items (
 );
 
 -- Enable Row Level Security
+alter table public.newsletter_subscribers enable row level security;
 alter table public.products enable row level security;
 alter table public.contact_submissions enable row level security;
 alter table public.cart_items enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
+
+-- RLS Policies for newsletter_subscribers (insert only)
+create policy "Anyone can subscribe to newsletter"
+  on public.newsletter_subscribers for insert
+  to public
+  with check (true);
 
 -- RLS Policies for products (public read)
 create policy "Products are viewable by everyone"
@@ -135,11 +151,12 @@ on conflict do nothing;
 
 ## Что это создаст:
 
-1. **products** - таблица продуктов
-2. **contact_submissions** - сообщения из контактной формы
-3. **cart_items** - корзина покупок (для авторизованных пользователей)
-4. **orders** - заказы
-5. **order_items** - элементы заказов
+1. **newsletter_subscribers** - подписчики на новости
+2. **products** - таблица продуктов
+3. **contact_submissions** - сообщения из контактной формы
+4. **cart_items** - корзина покупок (для авторизованных пользователей)
+5. **orders** - заказы
+6. **order_items** - элементы заказов
 
 Все таблицы защищены Row Level Security (RLS) политиками.
 

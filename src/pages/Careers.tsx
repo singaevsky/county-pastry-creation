@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Clock, Briefcase, Heart } from "lucide-react";
@@ -93,6 +94,11 @@ const Careers = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Вакансии"
+        description="Присоединяйтесь к команде Уездного кондитера! Актуальные вакансии кондитеров, помощников кондитеров, продавцов и менеджеров."
+        keywords="вакансии кондитер, работа кондитером, вакансии кондитерская"
+      />
       <Navbar />
       
       <main className="flex-grow">

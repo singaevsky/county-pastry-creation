@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { Calendar } from "lucide-react";
 import chocolateCake from "@/assets/chocolate-cake.jpg";
 import pastries from "@/assets/pastries.jpg";
@@ -122,16 +124,11 @@ const Blog = () => {
             Получайте эксклюзивные рецепты, советы от профессионалов и
             специальные предложения
           </p>
-          <div className="max-w-md mx-auto flex gap-4">
-            <input
-              type="email"
-              placeholder="Ваш email"
-              className="flex-1 px-4 py-3 rounded-md border border-border bg-background"
-            />
-            <button className="px-6 py-3 rounded-md gradient-warm text-white font-medium hover:opacity-90 transition-opacity">
-              Подписаться
-            </button>
-          </div>
+          <Link to="/newsletter">
+            <Button size="lg" className="gradient-warm text-white">
+              Подписаться на рассылку
+            </Button>
+          </Link>
         </div>
       </section>
 

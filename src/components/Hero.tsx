@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-bakery.jpg";
 
 const Hero = () => {
@@ -22,13 +23,17 @@ const Hero = () => {
             Попробуйте изысканные авторские кондитерские изделия, торты на заказ и свежую выпечку, приготовленную ежедневно из отборных ингредиентов.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Button size="lg" className="gradient-warm text-white shadow-elegant hover:opacity-90 transition-all">
-              Заказать сейчас
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button size="lg" variant="outline" className="hover:bg-secondary">
-              Посмотреть меню
-            </Button>
+            <Link to="/products">
+              <Button size="lg" className="gradient-warm text-white shadow-elegant hover:opacity-90 transition-all">
+                Заказать сейчас
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Link to="/products">
+              <Button size="lg" variant="outline" className="hover:bg-secondary">
+                Посмотреть меню
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
