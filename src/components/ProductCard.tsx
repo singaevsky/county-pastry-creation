@@ -25,9 +25,9 @@ const ProductCard = ({ id, image, title, description, price }: ProductCardProps)
   };
 
   return (
-    <article className="bg-white border border-gray-200 overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] max-w-md">
+    <Card className="overflow-hidden group cursor-pointer shadow-soft hover:shadow-elegant transition-all duration-300">
       <Link to={`/product/${id}`}>
-        <div className="aspect-square overflow-hidden bg-gray-50">
+        <div className="aspect-square overflow-hidden bg-muted">
           <img 
             src={image} 
             alt={title}
@@ -35,29 +35,29 @@ const ProductCard = ({ id, image, title, description, price }: ProductCardProps)
           />
         </div>
       </Link>
-      <div className="p-8 flex flex-col gap-3">
+      <div className="p-6 flex flex-col gap-4">
         <Link to={`/product/${id}`}>
-          <h2 className="text-[2.5rem] font-bold leading-tight tracking-tight text-black hover:opacity-70 transition-opacity" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
-            {title.toUpperCase()}
-          </h2>
+          <h3 className="text-2xl font-bold hover:text-primary transition-colors">
+            {title}
+          </h3>
         </Link>
-        <h3 className="text-[1.5rem] font-semibold text-black" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
+        <p className="text-muted-foreground line-clamp-2">
           {description}
-        </h3>
-        <p className="text-base font-normal text-black uppercase tracking-wide" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
-          {price}₽
         </p>
-        <Button 
-          size="lg" 
-          onClick={handleAddToCart} 
-          className="mt-4 w-full bg-black text-white hover:bg-gray-800 font-semibold"
-          style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
-        >
-          <ShoppingCart className="mr-2 h-5 w-5" />
-          В КОРЗИНУ
-        </Button>
+        <div className="flex items-center justify-between pt-2">
+          <span className="text-2xl font-bold text-primary">
+            {price} ₽
+          </span>
+          <Button 
+            size="sm" 
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            В корзину
+          </Button>
+        </div>
       </div>
-    </article>
+    </Card>
   );
 };
 

@@ -141,6 +141,42 @@ create policy "Users can view their order items"
     )
   );
 
+-- Create cake_configurations table
+create table if not exists public.cake_configurations (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade not null,
+  configuration jsonb not null,
+  price integer not null check (price >= 0),
+  status text not null default 'draft' check (status in ('draft', 'ordered', 'completed')),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Enable RLS for cake_configurations
+alter table public.cake_configurations enable row level security;
+
+-- RLS Policies for cake_configurations
+create policy "Users can view their own configurations"
+  on public.cake_configurations for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+create policy "Users can insert their own configurations"
+  on public.cake_configurations for insert
+  to authenticated
+  with check (auth.uid() = user_id);
+
+create policy "Users can update their own configurations"
+  on public.cake_configurations for update
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Users can delete their own configurations"
+  on public.cake_configurations for delete
+  to authenticated
+  using (auth.uid() = user_id);
+
 -- Insert sample products
 insert into public.products (title, description, price, category, image_url) values
   ('Шоколадный торт мечты', 'Нежные шоколадные коржи с шелковистым ганашем', 45.00, 'cakes', '/assets/chocolate-cake.jpg'),
@@ -157,6 +193,7 @@ on conflict do nothing;
 4. **cart_items** - корзина покупок (для авторизованных пользователей)
 5. **orders** - заказы
 6. **order_items** - элементы заказов
+7. **cake_configurations** - конфигурации тортов на заказ
 
 Все таблицы защищены Row Level Security (RLS) политиками.
 
