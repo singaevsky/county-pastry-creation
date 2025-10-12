@@ -1,14 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import SEO from "@/components/SEO";
-import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import CakeBuilderForm from "./CakeBuilderForm";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import CakeBuilderForm from "@/components/CakeBuilderForm";
 
-const CakeBuilder = () => {
+interface CakeBuilderModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const CakeBuilderModal = ({ open, onOpenChange }: CakeBuilderModalProps) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -23,6 +32,7 @@ const CakeBuilder = () => {
           description: "Войдите в систему, чтобы сохранить конфигурацию",
           variant: "destructive",
         });
+        onOpenChange(false);
         navigate("/auth");
         return;
       }
@@ -43,6 +53,7 @@ const CakeBuilder = () => {
         description: "Ваша конфигурация торта сохранена",
       });
       
+      onOpenChange(false);
       navigate("/profile");
     } catch (error) {
       console.error('Error saving configuration:', error);
@@ -57,34 +68,20 @@ const CakeBuilder = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <SEO 
-        title="Конструктор тортов | Уездный кондитер"
-        description="Создайте торт своей мечты с помощью нашего онлайн конструктора. Выберите размер, вкус, начинку и декор."
-        keywords="конструктор тортов, заказать торт, индивидуальный торт, торт на заказ"
-      />
-      <Navbar />
-      
-      <section className="py-20 gradient-soft">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Конструктор тортов
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Создайте торт своей мечты
-            </p>
-          </div>
-
-          <Card className="p-8 shadow-elegant">
-            <CakeBuilderForm onSubmit={handleSubmit} loading={loading} />
-          </Card>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh]">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">Конструктор тортов</DialogTitle>
+          <DialogDescription>
+            Создайте торт своей мечты
+          </DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="max-h-[70vh] pr-4">
+          <CakeBuilderForm onSubmit={handleSubmit} loading={loading} />
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-export default CakeBuilder;
+export default CakeBuilderModal;
