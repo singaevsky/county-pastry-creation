@@ -74,114 +74,150 @@ Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/c
 
 
 county-pastry-creation/
-├── backend/                          # NestJS бэкенд
+├── .gitignore                        # Standard ignores
+├── .env.example                      # Новое: Env template (добавлен ниже)
+├── README.md                         # Updated with migrations, tests, deploy
+├── docker-compose.yml                # Postgres, Redis, backend, frontend
+├── package.json                      # Root (workspaces: ["backend", "frontend"])
+├── backend/
+│   ├── .eslintrc.js                  # ESLint config
+│   ├── .env.example                  # Local env (копия root)
+│   ├── nest-cli.json                 # Nest CLI
+│   ├── ormconfig.ts                  # TypeORM config
+│   ├── package.json                  # Deps: nestjs, typeorm, etc.
 │   ├── src/
-│   │   ├── app.module.ts             # Root модуль, импорты всех модулей
-│   │   ├── main.ts                   # Entry point (bootstrap)
-│   │   ├── common/                   # Shared: filters, guards, interceptors
-│   │   │   ├── filters/              # e.g., http-exception.filter.ts
-│   │   │   ├── guards/               # e.g., roles.guard.ts (JWT-based)
-│   │   │   └── interceptors/         # e.g., logging.interceptor.ts
-│   │   ├── config/                   # ConfigService для .env
-│   │   │   └── config.module.ts
-│   │   ├── auth/                     # Модуль Auth (приоритет 1)
+│   │   ├── app.module.ts             # Root module
+│   │   ├── main.ts                   # Bootstrap with helmet, winston
+│   │   ├── common/                   # Shared
+│   │   │   ├── filters/              # http-exception.filter.ts
+│   │   │   ├── guards/               # roles.guard.ts, jwt-auth.guard.ts (новое ниже)
+│   │   │   ├── interceptors/         # logging.interceptor.ts
+│   │   │   ├── decorators/           # roles.decorator.ts (новое ниже)
+│   │   │   └── logger/               # winston.config.ts
+│   │   ├── config/                   # config.module.ts
+│   │   ├── auth/                     # Приоритет 1
 │   │   │   ├── auth.module.ts
 │   │   │   ├── auth.controller.ts
 │   │   │   ├── auth.service.ts
-│   │   │   ├── auth.dto.ts           # Login/Register DTO с class-validator
-│   │   │   ├── jwt.strategy.ts       # Passport JWT
-│   │   │   └── entities/             # User entity (shared с users)
-│   │   ├── users/                    # Модуль Users (приоритет 2)
+│   │   │   ├── auth.dto.ts
+│   │   │   ├── jwt.strategy.ts
+│   │   │   └── local-auth.guard.ts   # Новое: Local strategy guard (добавлен ниже)
+│   │   ├── users/                    # Приоритет 2
 │   │   │   ├── users.module.ts
 │   │   │   ├── users.controller.ts
 │   │   │   ├── users.service.ts
-│   │   │   ├── users.repository.ts   # TypeORM repo
-│   │   │   └── users.dto.ts          # DTO для профилей, ролей
-│   │   ├── recipes/                  # Модуль Recipes (приоритет 3)
+│   │   │   ├── users.repository.ts
+│   │   │   ├── users.dto.ts
+│   │   │   └── entities/user.entity.ts
+│   │   ├── recipes/                  # Приоритет 3
 │   │   │   ├── recipes.module.ts
 │   │   │   ├── recipes.controller.ts
 │   │   │   ├── recipes.service.ts
 │   │   │   ├── recipes.repository.ts
-│   │   │   ├── recipes.entity.ts     # Entity с ингредиентами (JSONB)
-│   │   │   └── recipes.dto.ts
-│   │   ├── suppliers/                # Модуль Suppliers (приоритет 4)
+│   │   │   ├── recipes.dto.ts
+│   │   │   └── entities/recipe.entity.ts
+│   │   ├── suppliers/                # Приоритет 4
 │   │   │   ├── suppliers.module.ts
 │   │   │   ├── suppliers.controller.ts
 │   │   │   ├── suppliers.service.ts
 │   │   │   ├── suppliers.repository.ts
-│   │   │   ├── suppliers.entity.ts
-│   │   │   └── suppliers.dto.ts
-│   │   ├── pricing/                  # Модуль Calculator (приоритет 5)
+│   │   │   ├── suppliers.dto.ts
+│   │   │   └── entities/supplier.entity.ts  # Новое: Entity (добавлен ниже)
+│   │   ├── pricing/                  # Приоритет 5
 │   │   │   ├── pricing.module.ts
 │   │   │   ├── pricing.controller.ts
-│   │   │   ├── pricing.service.ts    # Динамическое ценообразование
-│   │   │   └── pricing.dto.ts        # Input для расчетов
-│   │   ├── constructor/              # Модуль Constructor (приоритет 6)
+│   │   │   ├── pricing.service.ts
+│   │   │   └── pricing.dto.ts
+│   │   ├── constructor/              # Приоритет 6
 │   │   │   ├── constructor.module.ts
 │   │   │   ├── constructor.controller.ts
-│   │   │   ├── constructor.service.ts # Wizard логика, JSON сериализация
-│   │   │   └── constructor.dto.ts    # Params: colors, fillings, tiers
-│   │   ├── orders/                   # Модуль Orders (приоритет 7)
+│   │   │   ├── constructor.service.ts
+│   │   │   └── constructor.dto.ts
+│   │   ├── orders/                   # Приоритет 7
 │   │   │   ├── orders.module.ts
 │   │   │   ├── orders.controller.ts
-│   │   │   ├── orders.service.ts     # Создание заказов, статусы
+│   │   │   ├── orders.service.ts
 │   │   │   ├── orders.repository.ts
-│   │   │   ├── orders.entity.ts      # С JSON params от constructor
-│   │   │   └── orders.dto.ts
-│   │   ├── payments/                 # Модуль Payments (приоритет 8)
-│   │   │   ├── payments.module.ts    # Расширяемый: dynamic modules для новых систем
+│   │   │   ├── orders.dto.ts
+│   │   │   └── entities/order.entity.ts
+│   │   ├── payments/                 # Приоритет 8
+│   │   │   ├── payments.module.ts
 │   │   │   ├── payments.controller.ts
-│   │   │   ├── payments.service.ts   # Yookassa + Tinkoff, webhooks
-│   │   │   └── payments.dto.ts
-│   │   ├── geolocation/              # Модуль Geolocation (приоритет 9)
+│   │   │   ├── payments.service.ts
+│   │   │   ├── payments.dto.ts
+│   │   │   └── gateways/             # Расширение для плагинов
+│   │   │       ├── yookassa.gateway.ts
+│   │   │       └── tinkoff.gateway.ts  # Новое: Tinkoff плагин (добавлен ниже)
+│   │   ├── geolocation/              # Приоритет 9
 │   │   │   ├── geolocation.module.ts
 │   │   │   ├── geolocation.controller.ts
-│   │   │   ├── geolocation.service.ts # Назначение кондитера по coords
+│   │   │   ├── geolocation.service.ts
 │   │   │   └── geolocation.dto.ts
-│   │   ├── admin/                    # Модуль Admin (приоритет 10)
+│   │   ├── admin/                    # Приоритет 10
 │   │   │   ├── admin.module.ts
-│   │   │   ├── admin.controller.ts   # Дашборды, аналитика
-│   │   │   ├── admin.service.ts      # Графики (sales, fillings popularity)
+│   │   │   ├── admin.controller.ts
+│   │   │   ├── admin.service.ts
 │   │   │   └── admin.dto.ts
-│   │   └── integrations/             # Модуль Integrations (приоритет 11)
-│   │       ├── integrations.module.ts
-│   │       ├── delivery/             # Sub: CDEK + Yandex Delivery
-│   │       │   ├── delivery.service.ts
-│   │       │   └── delivery.dto.ts
-│   │       ├── notifications/        # Sub: Telegram bot, SendPulse
-│   │       │   ├── notifications.service.ts
-│   │       │   └── notifications.dto.ts
-│   │       └── onec/                 # Sub: 1C export (cron)
-│   │           └── onec.service.ts
-│   ├── test/                         # Jest unit tests
-│   │   └── *.spec.ts                 # По модулям
-│   ├── .env.example                  # Env template
-│   ├── tsconfig.json                 # TS config
-│   ├── nest-cli.json                 # Nest CLI
-│   └── package.json                  # Deps: nestjs, typeorm, pg, redis, etc.
-├── frontend/                         # React + Vite фронтенд (основан на прототипе)
-│   ├── public/                       # Assets: logos, images for cakes
+│   │   ├── integrations/             # Приоритет 11
+│   │   │   ├── integrations.module.ts
+│   │   │   ├── delivery/
+│   │   │   │   ├── delivery.service.ts
+│   │   │   │   └── delivery.dto.ts
+│   │   │   ├── notifications/
+│   │   │   │   ├── notifications.service.ts
+│   │   │   │   └── notifications.dto.ts
+│   │   │   └── onec/
+│   │   │       └── onec.service.ts
+│   │   └── migrations/               # Новое: Полные миграции
+│   │       ├── CreateUserTable.ts    # Пример (обновлен)
+│   │       ├── CreateRecipeTable.ts  # Новое (добавлен ниже)
+│   │       ├── CreateSupplierTable.ts # Новое (добавлен ниже)
+│   │       ├── CreateOrderTable.ts   # Новое (добавлен ниже)
+│   │       └── ... (для остальных entities)
+│   ├── test/                         # Тесты
+│   │   ├── auth.service.spec.ts      # Новое (добавлен ниже)
+│   │   ├── admin.service.spec.ts     # Существующий
+│   │   └── ... (для всех сервисов)
+│   └── tsconfig.json                 # TS config
+├── frontend/
+│   ├── cypress/
+│   │   └── e2e/
+│   │       ├── adminCharts.cy.ts
+│   │       ├── constructor.cy.ts
+│   │       └── orders.cy.ts          # Новое: e2e для orders (добавлен ниже)
+│   ├── index.html                    # Vite template
+│   ├── package.json                  # Deps: react, shadcn-ui, etc.
+│   ├── postcss.config.js             # PostCSS
+│   ├── public/                       # Assets
 │   ├── src/
-│   │   ├── components/               # UI: shadcn-ui + custom
-│   │   │   ├── ui/                   # shadcn: button, input, etc.
-│   │   │   ├── auth/                 # Login/Register forms
-│   │   │   ├── admin/                # Dashboards, charts (recharts)
-│   │   │   └── cake-builder/         # Wizard: steps for constructor
-│   │   ├── hooks/                    # Custom: useAuth, usePricing
-│   │   ├── services/                 # API calls (axios)
+│   │   ├── components/
+│   │   │   ├── ui/                   # shadcn-ui
+│   │   │   ├── auth/                 # Новое: Auth forms
+│   │   │   │   ├── Login.tsx         # Новое (добавлен ниже)
+│   │   │   │   └── Register.tsx      # Новое (добавлен ниже)
+│   │   │   ├── admin/                # Charts
+│   │   │   │   ├── AdminDashboard.tsx
+│   │   │   │   ├── SalesChart.tsx
+│   │   │   │   ├── FillingsPopularityChart.tsx
+│   │   │   │   └── ConstructorConversionChart.tsx
+│   │   │   └── cake-builder/         # Wizard
+│   │   │       ├── WizardSteps.tsx
+│   │   │       ├── ColorSelection.tsx
+│   │   │       ├── FillingSelection.tsx # Новое (добавлен ниже)
+│   │   │       ├── TierSelection.tsx # Новое (добавлен ниже)
+│   │   │       ├── UploadSketch.tsx  # Новое (добавлен ниже)
+│   │   │       └── PreviewPrice.tsx
+│   │   ├── hooks/                    # useAdminData.ts, useAuth.ts (новое ниже)
+│   │   ├── services/                 # api.ts
 │   │   ├── types/                    # Shared DTO types
-│   │   ├── App.tsx                   # Root (router)
+│   │   ├── utils/                    # jsonSerializer.ts
+│   │   ├── App.tsx                   # Root with router (обновлен ниже)
 │   │   ├── main.tsx                  # Entry
 │   │   └── vite-env.d.ts             # Env types
-│   ├── index.html                    # Vite template
-│   ├── vite.config.ts                # Vite config (proxies to backend)
 │   ├── tailwind.config.js            # Tailwind
-│   ├── postcss.config.js             # PostCSS
 │   ├── tsconfig.json                 # TS config
-│   ├── cypress/                      # E2E tests
-│   │   └── e2e/                      # Specs for wizard, orders
-│   └── package.json                  # Deps: react, shadcn-ui, tailwind, axios, etc.
-├── docker-compose.yml                # Services: postgres, redis, backend, frontend
-├── .gitignore                        # Standard
-├── README.md                         # Setup, deploy, architecture
-└── package.json                      # Root (если нужно workspaces)
+│   ├── tsconfig.node.json            # Node TS
+│   └── vite.config.ts                # Vite with proxy
+└── .github/
+    └── workflows/
+        └── ci.yml                    # Новое: CI/CD (добавлен ниже)
