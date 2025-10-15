@@ -1,12 +1,5 @@
 import { IsEmail, IsString, IsEnum, MinLength } from 'class-validator';
-
-enum Role {
-  CLIENT = 'client',
-  BAKER = 'baker',
-  SALES_MANAGER = 'sales_manager',
-  LOGISTICS_MANAGER = 'logistics_manager',
-  ADMIN = 'admin',
-}
+import { Role } from '../common/types';
 
 export class RegisterDto {
   /**

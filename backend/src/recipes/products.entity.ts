@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ProductType } from '../common/types';
 
 @Entity('products')
 export class Product {
@@ -11,8 +12,8 @@ export class Product {
   /**
    * Тип изделия
    */
-  @Column({ type: 'enum', enum: ['torte', 'bento_torte', 'pie_berry', 'pie_meat', 'pie_lenten', 'roulette', 'pastry', 'cupcake', 'other'] })
-  type: string;
+  @Column({ type: 'enum', enum: ProductType })
+  type: ProductType;
 
   /**
    * Максимальное количество ярусов
@@ -25,6 +26,4 @@ export class Product {
    */
   @Column()
   maxFillings: number;
-
-  // Расширяемо: добавить поля для новых правил (e.g., allowedColors)
 }

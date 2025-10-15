@@ -1,16 +1,5 @@
 import { IsEnum, IsArray, MaxLength, IsNumber, IsOptional, IsUrl } from 'class-validator';
-
-enum ProductType {
-  TORTE = 'torte',
-  BENTO_TORTE = 'bento_torte',
-  PIE_BERRY = 'pie_berry',
-  PIE_MEAT = 'pie_meat',
-  PIE_LENTEN = 'pie_lenten',
-  ROULETTE = 'roulette',
-  PASTRY = 'pastry',
-  CUPCAKE = 'cupcake',
-  OTHER = 'other',
-}
+import { ProductType } from '../common/types';
 
 export class ConstructorParamsDto {
   /**

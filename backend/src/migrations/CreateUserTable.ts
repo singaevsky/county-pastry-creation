@@ -7,7 +7,7 @@ export class CreateUserTable1729000000000 implements MigrationInterface {
         "id" SERIAL PRIMARY KEY,
         "email" VARCHAR UNIQUE NOT NULL,
         "password" VARCHAR NOT NULL,
-        "role" VARCHAR NOT NULL CHECK (role IN ('client', 'baker', 'sales_manager', 'logistics_manager', 'admin')),
+        "role" VARCHAR NOT NULL CHECK (role IN ('client','baker','sales_manager','logistics_manager','admin')),
         "geoLat" DOUBLE PRECISION,
         "geoLong" DOUBLE PRECISION,
         "workload" INTEGER DEFAULT 0,
