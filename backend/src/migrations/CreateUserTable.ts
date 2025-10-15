@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateUserTable1650000000000 implements MigrationInterface {
+export class CreateUserTable1729000000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE "users" (
         "id" SERIAL PRIMARY KEY,
         "email" VARCHAR UNIQUE NOT NULL,
         "password" VARCHAR NOT NULL,
-        "role" VARCHAR(20) NOT NULL CHECK (role IN ('client', 'admin', 'manager', 'baker')),
+        "role" VARCHAR NOT NULL CHECK (role IN ('client', 'baker', 'sales_manager', 'logistics_manager', 'admin')),
         "geoLat" DOUBLE PRECISION,
         "geoLong" DOUBLE PRECISION,
         "workload" INTEGER DEFAULT 0,
@@ -15,14 +15,7 @@ export class CreateUserTable1650000000000 implements MigrationInterface {
       );
     `);
   }
-// ... up()
-await queryRunner.query(`
-  CREATE TABLE "users" (
-    ...
-    "role" VARCHAR NOT NULL CHECK (role IN ('client', 'baker', 'sales_manager', 'logistics_manager', 'admin')),
-    ...
-  );
-`);
+
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE "users";`);
   }
