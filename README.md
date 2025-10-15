@@ -71,3 +71,117 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+
+county-pastry-creation/
+├── backend/                          # NestJS бэкенд
+│   ├── src/
+│   │   ├── app.module.ts             # Root модуль, импорты всех модулей
+│   │   ├── main.ts                   # Entry point (bootstrap)
+│   │   ├── common/                   # Shared: filters, guards, interceptors
+│   │   │   ├── filters/              # e.g., http-exception.filter.ts
+│   │   │   ├── guards/               # e.g., roles.guard.ts (JWT-based)
+│   │   │   └── interceptors/         # e.g., logging.interceptor.ts
+│   │   ├── config/                   # ConfigService для .env
+│   │   │   └── config.module.ts
+│   │   ├── auth/                     # Модуль Auth (приоритет 1)
+│   │   │   ├── auth.module.ts
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auth.dto.ts           # Login/Register DTO с class-validator
+│   │   │   ├── jwt.strategy.ts       # Passport JWT
+│   │   │   └── entities/             # User entity (shared с users)
+│   │   ├── users/                    # Модуль Users (приоритет 2)
+│   │   │   ├── users.module.ts
+│   │   │   ├── users.controller.ts
+│   │   │   ├── users.service.ts
+│   │   │   ├── users.repository.ts   # TypeORM repo
+│   │   │   └── users.dto.ts          # DTO для профилей, ролей
+│   │   ├── recipes/                  # Модуль Recipes (приоритет 3)
+│   │   │   ├── recipes.module.ts
+│   │   │   ├── recipes.controller.ts
+│   │   │   ├── recipes.service.ts
+│   │   │   ├── recipes.repository.ts
+│   │   │   ├── recipes.entity.ts     # Entity с ингредиентами (JSONB)
+│   │   │   └── recipes.dto.ts
+│   │   ├── suppliers/                # Модуль Suppliers (приоритет 4)
+│   │   │   ├── suppliers.module.ts
+│   │   │   ├── suppliers.controller.ts
+│   │   │   ├── suppliers.service.ts
+│   │   │   ├── suppliers.repository.ts
+│   │   │   ├── suppliers.entity.ts
+│   │   │   └── suppliers.dto.ts
+│   │   ├── pricing/                  # Модуль Calculator (приоритет 5)
+│   │   │   ├── pricing.module.ts
+│   │   │   ├── pricing.controller.ts
+│   │   │   ├── pricing.service.ts    # Динамическое ценообразование
+│   │   │   └── pricing.dto.ts        # Input для расчетов
+│   │   ├── constructor/              # Модуль Constructor (приоритет 6)
+│   │   │   ├── constructor.module.ts
+│   │   │   ├── constructor.controller.ts
+│   │   │   ├── constructor.service.ts # Wizard логика, JSON сериализация
+│   │   │   └── constructor.dto.ts    # Params: colors, fillings, tiers
+│   │   ├── orders/                   # Модуль Orders (приоритет 7)
+│   │   │   ├── orders.module.ts
+│   │   │   ├── orders.controller.ts
+│   │   │   ├── orders.service.ts     # Создание заказов, статусы
+│   │   │   ├── orders.repository.ts
+│   │   │   ├── orders.entity.ts      # С JSON params от constructor
+│   │   │   └── orders.dto.ts
+│   │   ├── payments/                 # Модуль Payments (приоритет 8)
+│   │   │   ├── payments.module.ts    # Расширяемый: dynamic modules для новых систем
+│   │   │   ├── payments.controller.ts
+│   │   │   ├── payments.service.ts   # Yookassa + Tinkoff, webhooks
+│   │   │   └── payments.dto.ts
+│   │   ├── geolocation/              # Модуль Geolocation (приоритет 9)
+│   │   │   ├── geolocation.module.ts
+│   │   │   ├── geolocation.controller.ts
+│   │   │   ├── geolocation.service.ts # Назначение кондитера по coords
+│   │   │   └── geolocation.dto.ts
+│   │   ├── admin/                    # Модуль Admin (приоритет 10)
+│   │   │   ├── admin.module.ts
+│   │   │   ├── admin.controller.ts   # Дашборды, аналитика
+│   │   │   ├── admin.service.ts      # Графики (sales, fillings popularity)
+│   │   │   └── admin.dto.ts
+│   │   └── integrations/             # Модуль Integrations (приоритет 11)
+│   │       ├── integrations.module.ts
+│   │       ├── delivery/             # Sub: CDEK + Yandex Delivery
+│   │       │   ├── delivery.service.ts
+│   │       │   └── delivery.dto.ts
+│   │       ├── notifications/        # Sub: Telegram bot, SendPulse
+│   │       │   ├── notifications.service.ts
+│   │       │   └── notifications.dto.ts
+│   │       └── onec/                 # Sub: 1C export (cron)
+│   │           └── onec.service.ts
+│   ├── test/                         # Jest unit tests
+│   │   └── *.spec.ts                 # По модулям
+│   ├── .env.example                  # Env template
+│   ├── tsconfig.json                 # TS config
+│   ├── nest-cli.json                 # Nest CLI
+│   └── package.json                  # Deps: nestjs, typeorm, pg, redis, etc.
+├── frontend/                         # React + Vite фронтенд (основан на прототипе)
+│   ├── public/                       # Assets: logos, images for cakes
+│   ├── src/
+│   │   ├── components/               # UI: shadcn-ui + custom
+│   │   │   ├── ui/                   # shadcn: button, input, etc.
+│   │   │   ├── auth/                 # Login/Register forms
+│   │   │   ├── admin/                # Dashboards, charts (recharts)
+│   │   │   └── cake-builder/         # Wizard: steps for constructor
+│   │   ├── hooks/                    # Custom: useAuth, usePricing
+│   │   ├── services/                 # API calls (axios)
+│   │   ├── types/                    # Shared DTO types
+│   │   ├── App.tsx                   # Root (router)
+│   │   ├── main.tsx                  # Entry
+│   │   └── vite-env.d.ts             # Env types
+│   ├── index.html                    # Vite template
+│   ├── vite.config.ts                # Vite config (proxies to backend)
+│   ├── tailwind.config.js            # Tailwind
+│   ├── postcss.config.js             # PostCSS
+│   ├── tsconfig.json                 # TS config
+│   ├── cypress/                      # E2E tests
+│   │   └── e2e/                      # Specs for wizard, orders
+│   └── package.json                  # Deps: react, shadcn-ui, tailwind, axios, etc.
+├── docker-compose.yml                # Services: postgres, redis, backend, frontend
+├── .gitignore                        # Standard
+├── README.md                         # Setup, deploy, architecture
+└── package.json                      # Root (если нужно workspaces)
