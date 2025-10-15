@@ -35,14 +35,23 @@ const ProductCard = ({ id, image, title, description, price }: ProductCardProps)
           />
         </div>
       </Link>
-      <div className="p-6">
+      <div className="p-6 flex flex-col gap-4">
         <Link to={`/product/${id}`}>
-          <h3 className="text-xl font-semibold mb-2 hover:text-primary transition-colors">{title}</h3>
+          <h3 className="text-2xl font-bold hover:text-primary transition-colors">
+            {title}
+          </h3>
         </Link>
-        <p className="text-muted-foreground mb-4 line-clamp-2">{description}</p>
-        <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-primary">${price}</span>
-          <Button size="sm" onClick={handleAddToCart} className="bg-primary hover:bg-primary/90">
+        <p className="text-muted-foreground line-clamp-2">
+          {description}
+        </p>
+        <div className="flex items-center justify-between pt-2">
+          <span className="text-2xl font-bold text-primary">
+            {price} ₽
+          </span>
+          <Button 
+            size="sm" 
+            onClick={handleAddToCart}
+          >
             <ShoppingCart className="mr-2 h-4 w-4" />
             В корзину
           </Button>
