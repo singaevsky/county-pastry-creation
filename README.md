@@ -220,10 +220,3 @@ county-pastry-creation/
 │   ├── tsconfig.json
 │   ├── tsconfig.node.json
 │   └── vite.config.ts
-
-
-## Обновления (15.10.2025)
-- Вынесен enum Role/ProductType в common/types.ts
-- Исправлено дублирование endpoints в orders.controller.ts
-- Синхронизированы миграции (CreateUserTable.ts, CreateProductsTable.ts, CreateFillingsTable.ts)
-- Добавлены начальные данные для products/fillings
