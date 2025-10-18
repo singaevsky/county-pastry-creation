@@ -5,16 +5,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import * as redisStore from 'cache-manager-redis-store';
 
-// Импортируй свои модули ниже
+import { ProductsController } from './recipes/products.controller';
+import { ProductsService } from './recipes/products.service';
+import { Product } from './recipes/products.entity';
+
+// Domain modules
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { ConstructorModule } from './constructor/constructor.module';
 import { PaymentsModule } from './payments/payments.module';
 
+import { FillingsController } from './recipes/fillings.controller';
+import { FillingsService } from './recipes/fillings.service';
+import { Filling } from './recipes/fillings.entity';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
@@ -23,11 +32,12 @@ import { PaymentsModule } from './payments/payments.module';
         return {
           store: redisStore,
           url: redisUrl,
-          ttl: 60, // default cache TTL in seconds
+          ttl: 60,
         } as any;
       },
       inject: [ConfigService],
     }),
+
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -36,6 +46,7 @@ import { PaymentsModule } from './payments/payments.module';
       }),
       inject: [ConfigService],
     }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (cfg: ConfigService) => ({
@@ -52,12 +63,21 @@ import { PaymentsModule } from './payments/payments.module';
       }),
       inject: [ConfigService],
     }),
-    // Your domain modules:
+
+    // Domain modules
     AuthModule,
     UsersModule,
     OrdersModule,
     ConstructorModule,
     PaymentsModule,
+
+    // Feature module for products
+    TypeOrmModule.forFeature([Product, Filling]),
+
   ],
+controllers: [ProductsController, FillingsController],
+providers: [ProductsService, FillingsService],
 })
 export class AppModule {}
+
+// backend/src/app.module.ts

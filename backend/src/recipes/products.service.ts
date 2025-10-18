@@ -1,19 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+// backend/src/recipes/products.service.ts
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Product } from './products.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
-  constructor(@InjectRepository(Product) private readonly productRepo: Repository<Product>) {}
-
-  async findBySlug(slug: string): Promise<Product> {
-    const product = await this.productRepo.findOne({ where: { slug, isActive: true } });
-    if (!product) throw new NotFoundException(`Product "${slug}" not found`);
-    return product;
-  }
+  constructor(
+    @InjectRepository(Product)
+    private readonly repo: Repository<Product>,
+  ) {}
 
   async findAll(): Promise<Product[]> {
-    return this.productRepo.find({ where: { isActive: true } });
+    return this.repo.find({ where: { isActive: true } });
+  }
+
+  async findBySlug(slug: string): Promise<Product> {
+    return this.repo.findOne({ where: { slug, isActive: true } });
   }
 }
