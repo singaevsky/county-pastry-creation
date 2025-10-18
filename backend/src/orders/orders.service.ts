@@ -17,27 +17,31 @@ export class OrdersService {
   ) {}
 
   async create(userId: number, dto: CreateOrderDto) {
-    const user = await this.usersService.findById(userId);
-    if (!user) throw new NotFoundException('User not found');
+  const user = await this.usersService.findById(userId);
+  if (!user) throw new NotFoundException('User not found');
 
-    const product = await this.productsService.findBySlug(dto.productSlug);
-    if (!product) throw new NotFoundException('Product not found');
+  const product = await this.productsService.findBySlug(dto.productSlug);
+  if (!product) throw new NotFoundException('Product not found');
 
-    if (!dto.fillings || dto.fillings.length === 0) {
-      throw new BadRequestException('At least one filling must be selected');
-    }
+  if (!dto.fillings || dto.fillings.length === 0) {
+    throw new BadRequestException('At least one filling must be selected');
+  }
 
-    const totalPrice = this.priceCalculator.calculate(product, dto.fillings);
+  // Приведение к типу { fillingId, qty }
+  const fillings = dto.fillings.map(f => ({ fillingId: f.id, qty: f.qty }));
 
-    const order = this.orderRepo.create({
-      user,
-      product,
-      fillings: dto.fillings,
-      quantity: dto.quantity,
-      totalPrice,
-      status: 'pending',
-    });
+  const totalPrice = this.priceCalculator.calculate(product, fillings);
 
-    return this.orderRepo.save(order);
+  const order = this.orderRepo.create({
+    user,
+    product,
+    fillings,
+    quantity: dto.quantity,
+    totalPrice,
+    status: 'pending',
+  });
+
+  return this.orderRepo.save(order);
+
   }
 }

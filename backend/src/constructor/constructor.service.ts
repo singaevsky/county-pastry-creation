@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { PriceCalculatorService } from './price-calculator.service';
 import { DesignUploadService } from '../upload/design.service';
 import { CreateConstructorDto } from './dto/create-constructor.dto';
+import { Product } from '../recipes/products.entity';
+import { Filling } from '../recipes/fillings.entity';
 
 @Injectable()
 export class ConstructorService {
@@ -18,23 +20,24 @@ export class ConstructorService {
     private readonly designUpload: DesignUploadService,
   ) {}
 
-  async createDraft(userId: number, dto: CreateConstructorDto, files?: Express.Multer.File[]) {
-    // validate dto consistency (example: tiers)
+  async createDraft(
+    userId: number,
+    dto: CreateConstructorDto,
+    files?: Express.Multer.File[],
+  ) {
     if (dto.tiers && dto.tiers > 5) {
       throw new BadRequestException('Maximum tiers is 5');
     }
 
-    // upload images (if any) via DesignUploadService
-    const uploaded = [];
+    const uploaded: string[] = [];
     if (files && files.length) {
       for (const f of files) {
-        const url = await this.designUpload.uploadFile(f);
+        const url = await this.uploadDesign(f, 'constructor');
         uploaded.push(url);
       }
     }
 
-    // calculate price via dedicated service
-    const price = await this.priceCalculator.calculate(dto);
+    const price = await this.calculatePrice(dto);
 
     const entity = this.repo.create({
       userId,
@@ -57,26 +60,17 @@ export class ConstructorService {
     return this.repo.save(draft);
   }
 
-  // other methods: updateDraft, getDraftsForUser, fetchById etc.
-}
-import { Injectable } from '@nestjs/common';
-import { PriceCalculatorService } from './services/price-calculator.service';
-import { DesignUploadService } from './services/design-upload.service';
-import { Product } from '../recipes/products.entity';
+  async calculatePrice(dto: CreateConstructorDto): Promise<number> {
+    const product = new Product();
+    product.id = dto.productId;
 
-@Injectable()
-export class ConstructorService {
-  constructor(
-    private readonly priceCalculator: PriceCalculatorService,
-    private readonly designUpload: DesignUploadService,
-  ) {}
-
-  calculatePrice(product: Product, fillings: any[], options?: any) {
-    return this.priceCalculator.calculate(product, fillings, options);
+    const fillings: Filling[] = dto.fillings || [];
+    return this.priceCalculator.calculate(product, fillings, dto.options);
   }
 
-  async uploadDesign(file: Express.Multer.File, dest: string) {
+  async uploadDesign(file: Express.Multer.File, dest: string): Promise<string> {
     return this.designUpload.validateAndSave(file, dest);
   }
-}
 
+  // TODO: updateDraft, getDraftsForUser, fetchById
+}
