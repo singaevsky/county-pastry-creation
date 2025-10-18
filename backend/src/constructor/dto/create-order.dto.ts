@@ -1,4 +1,3 @@
-// backend/src/constructor/dto/create-order.dto.ts
 import { IsString, IsNotEmpty, IsArray, ValidateNested, IsNumber, Min, ArrayMinSize } from 'class-validator';
 import { Type } from 'class-transformer';
 

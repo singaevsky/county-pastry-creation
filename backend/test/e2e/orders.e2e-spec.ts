@@ -31,7 +31,6 @@ describe('Orders e2e', () => {
     };
 
     const res = await request(app.getHttpServer()).post('/orders').send(createDto);
-    expect(res.status).toBeGreaterThanOrEqual(200);
     expect([200, 201]).toContain(res.status);
     expect(res.body).toHaveProperty('id');
     expect(res.body).toHaveProperty('status');

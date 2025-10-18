@@ -19,7 +19,7 @@ export class RequestIdInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const ms = Date.now() - start;
-        // Можно логировать здесь: метод, url, statusCode, ms, requestId
+        console.log(`[RequestId ${requestId}] ${req.method} ${req.url} - ${ms}ms`);
       }),
     );
   }
