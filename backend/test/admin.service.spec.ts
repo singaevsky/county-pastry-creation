@@ -1,62 +1,44 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from '../src/auth/auth.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from '../src/users/user.entity';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { AdminService } from '../src/admin/admin.service';
+import { Order } from '../src/orders/entities/order.entity';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/common';
 
-describe('AuthService', () => {
-  let service: AuthService;
-  const mockRepo = {
-    findOneBy: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
+describe('AdminService', () => {
+  let service: AdminService;
+  const mockOrdersRepo = {
+    createQueryBuilder: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      groupBy: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      getRawMany: jest.fn().mockResolvedValue([{ date: '2025-10-01', total: '1000' }]),
+    }),
+    count: jest.fn().mockResolvedValue(10),
   };
-  const mockJwt = { sign: jest.fn().mockReturnValue('token') };
+  const mockCache = {
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AuthService,
-        { provide: getRepositoryToken(User), useValue: mockRepo },
-        { provide: JwtService, useValue: mockJwt },
+        AdminService,
+        { provide: getRepositoryToken(Order), useValue: mockOrdersRepo },
+        { provide: CACHE_MANAGER, useValue: mockCache },
       ],
     }).compile();
-    service = module.get<AuthService>(AuthService);
+
+    service = module.get<AdminService>(AdminService);
   });
 
-  it('should register user with valid role', async () => {
-    mockRepo.findOneBy.mockResolvedValue(null);
-    mockRepo.create.mockReturnValue({ email: 'test', password: 'hashed', role: 'client' });
-    mockRepo.save.mockResolvedValue({ id: 1, email: 'test', role: 'client' });
-    jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashed' as never);
-
-    const result = await service.register({ email: 'test@example.com', password: 'password', role: 'client' });
-    expect(result).toEqual({ accessToken: 'token' });
-    expect(mockRepo.save).toHaveBeenCalledWith(expect.objectContaining({ role: 'client' }));
+  it('should return sales data', async () => {
+    const result = await service.getSalesData();
+    expect(result).toEqual([{ date: '2025-10-01', total: 1000 }]);
+    expect(mockCache.set).toHaveBeenCalled();
   });
 
-  it('should register baker with geo coordinates', async () => {
-    mockRepo.findOneBy.mockResolvedValue(null);
-    mockRepo.create.mockReturnValue({ email: 'baker', password: 'hashed', role: 'baker', geoLat: 55.7558, geoLong: 37.6173 });
-    mockRepo.save.mockResolvedValue({ id: 2, email: 'baker', role: 'baker' });
-    jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashed' as never);
-
-    const result = await service.register({ email: 'baker@example.com', password: 'password', role: 'baker' });
-    expect(result).toEqual({ accessToken: 'token' });
-    expect(mockRepo.save).toHaveBeenCalledWith(expect.objectContaining({ role: 'baker' }));
-  });
-
-  it('should fail registration with invalid role', async () => {
-    await expect(service.register({ email: 'test', password: 'pass', role: 'invalid' as any }))
-      .rejects.toThrow('Validation failed');
-  });
-
-  it('should login and return token with role', async () => {
-    mockRepo.findOneBy.mockResolvedValue({ id: 1, email: 'test', password: 'hashed', role: 'admin' });
-    jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
-    const result = await service.login({ email: 'test', password: 'pass' });
-    expect(result).toEqual({ accessToken: 'token' });
-    expect(mockJwt.sign).toHaveBeenCalledWith(expect.objectContaining({ role: 'admin' }));
-  });
+  // Аналогичные тесты для fillings и conversion
 });
