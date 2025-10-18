@@ -1,0 +1,14 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: cd backend && npm run lint && npm test
+      - run: cd frontend && npm run lint && npx cypress run
+      - run: docker-compose up -d
+      - run: cd backend && npm run migration:run

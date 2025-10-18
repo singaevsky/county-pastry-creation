@@ -3,8 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Recipe } from '../recipes/recipes.entity';
 import { PricingDto } from './pricing.dto'; // { recipeId, params: ConstructorParams, deliveryType }
+import { CACHE_MANAGER, Inject } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 
 @Injectable()
+export class PricingService {
+  constructor(
+    // ... repos
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
+
+  async calculatePrice(dto: PricingDto): Promise<number> {
+    const cacheKey = `price:${JSON.stringify(dto)}`;
+    const cached = await this.cacheManager.get<number>(cacheKey);
+    if (cached) return cached;
+
+    // ... logic
+    const price = /* calculated */;
+    await this.cacheManager.set(cacheKey, price, { ttl: 300 }); // 5 min
+    return price;
+  }
+
 export class PricingService {
   constructor(
     @InjectRepository(Recipe)
