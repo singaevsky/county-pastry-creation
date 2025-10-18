@@ -1,24 +1,17 @@
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: '/api', // Proxy to backend:3000 via Vite
-  headers: { 'Content-Type': 'application/json' },
+export const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
 });
 
-// Interceptor for JWT
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
-// ... existing
-
-export const getSalesChart = (params: { startDate?: string; endDate?: string }) =>
-  api.get('/admin/charts/sales', { params });
-
-export const getFillingsPopularity = (params: { startDate?: string; endDate?: string }) =>
-  api.get('/admin/charts/fillings-popularity', { params });
-
-export const getConstructorConversion = (params: { startDate?: string; endDate?: string }) =>
-  api.get('/admin/charts/constructor-conversion', { params });
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (!err.response) {
+      console.error('Network error', err);
+      throw new Error('Network error');
+    }
+    console.error(err.response.data);
+    throw err.response.data;
+  },
+);

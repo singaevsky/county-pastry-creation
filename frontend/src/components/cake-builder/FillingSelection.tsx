@@ -1,22 +1,47 @@
-import React from 'react';
-import { useFormContext, useFieldArray } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from 'react';
+import { api } from '../../services/api';
 
-export const FillingSelection: React.FC = () => {
-  const { control } = useFormContext();
-  const { fields, append, remove } = useFieldArray({ control, name: 'fillings' });
+interface Filling {
+  id: number;
+  name: string;
+  price: number;
+}
+
+interface Props {
+  selected: { [fillingId: number]: number };
+  onChange: (selected: { [fillingId: number]: number }) => void;
+}
+
+export const FillingSelection: React.FC<Props> = ({ selected, onChange }) => {
+  const [fillings, setFillings] = useState<Filling[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/fillings')
+      .then((res) => setFillings(res.data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleQtyChange = (id: number, qty: number) => {
+    onChange({ ...selected, [id]: qty });
+  };
+
+  if (loading) return <div>Loading fillings...</div>;
 
   return (
-    <div>
-      <h3>Выберите до 3 начинок</h3>
-      {fields.map((field, index) => (
-        <div key={field.id} className="flex gap-2 mb-2">
-          <Input {...control.register(`fillings.${index}`)} placeholder="Начинка (e.g., крем)" />
-          <Button type="button" onClick={() => remove(index)}>Удалить</Button>
+    <div className="filling-selection">
+      {fillings.map((f) => (
+        <div key={f.id}>
+          <span>{f.name} — ${f.price}</span>
+          <input
+            type="number"
+            min={0}
+            value={selected[f.id] || 0}
+            onChange={(e) => handleQtyChange(f.id, parseInt(e.target.value, 10))}
+          />
         </div>
       ))}
-      {fields.length < 3 && <Button type="button" onClick={() => append('')}>Добавить</Button>}
     </div>
   );
 };
