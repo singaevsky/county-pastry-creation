@@ -4,57 +4,41 @@ import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import helmet from 'helmet';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { RequestIdInterceptor } from './common/interceptors/request-id.interceptor';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
-  });
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   // Security
   app.use(helmet());
 
-  // CORS — читать из env, по умолчанию разрешаем none (безопаснее).
-  const allowedOrigin = process.env.CORS_ORIGIN || '';
-  if (allowedOrigin) {
-    app.enableCors({
-      origin: allowedOrigin.split(','),
-      credentials: true,
-    });
-    logger.log(`CORS enabled for: ${allowedOrigin}`);
-  } else {
-    logger.log('CORS not enabled (CORS_ORIGIN not set)');
-  }
+  // CORS — подставь нужные origin в production
+  app.enableCors({
+    origin: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : true,
+    credentials: true,
+  });
 
-  // Global pipes and filters
+  // Global pipes & filters
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalInterceptors(new RequestIdInterceptor());
 
-  // Swagger (only in non-production)
-  const nodeEnv = process.env.NODE_ENV || 'development';
-  if (nodeEnv !== 'production') {
+  // Swagger (dev and staging)
+  if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('County Pastry API')
-      .setDescription('API for pastry constructor and orders')
+      .setDescription('API for pastry constructor')
       .setVersion('1.0')
       .addBearerAuth()
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
-    logger.log('Swagger available at /api/docs');
+    logger.log('Swagger enabled at /api/docs');
   }
 
-  const port = Number(process.env.PORT) || 3000;
+  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
   await app.listen(port);
-  logger.log(`Application is running on: http://localhost:${port}`);
+  logger.log(`Application is running on: ${await app.getUrl()}`);
 }
 
-bootstrap().catch((err) => {
-  // eslint-disable-next-line no-console
-  console.error('Bootstrap error', err);
-  process.exit(1);
-});
+bootstrap();
