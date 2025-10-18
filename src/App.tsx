@@ -15,8 +15,6 @@ import Auth from "./pages/Auth";
 import Recipes from "./pages/Recipes";
 import Careers from "./pages/Careers";
 import Newsletter from "./pages/Newsletter";
-import CakeBuilder from "./pages/CakeBuilder";
-import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,8 +38,6 @@ const App = () => (
             <Route path="/recipes" element={<Recipes />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/newsletter" element={<Newsletter />} />
-            <Route path="/cake-builder" element={<CakeBuilder />} />
-            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

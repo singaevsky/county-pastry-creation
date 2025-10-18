@@ -70,9 +70,6 @@ const Navbar = () => {
               <Link to="/about" className="text-foreground hover:text-primary transition-colors">
                 О нас
               </Link>
-              <Link to="/cake-builder" className="text-foreground hover:text-primary transition-colors">
-                Конструктор
-              </Link>
               <Link to="/blog" className="text-foreground hover:text-primary transition-colors">
                 Блог
               </Link>
@@ -93,10 +90,6 @@ const Navbar = () => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem disabled className="text-muted-foreground">
                     {user.email}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/profile")}>
-                    <User className="mr-2 h-4 w-4" />
-                    Профиль
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />

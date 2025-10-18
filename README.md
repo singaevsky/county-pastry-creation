@@ -74,156 +74,114 @@ Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/c
 
 
 county-pastry-creation/
-├── .env.example                      # Env template
-├── .eslintrc.js                      # Unified ESLint
-├── .gitignore                        # Standard
-├── README.md                         # Setup, deploy (updated with new roles, constructor)
-├── docker-compose.yml                # Postgres, Redis, backend, frontend
-├── package.json                      # Workspaces
-├── .github/workflows/ci.yml          # CI/CD (updated for new tests)
-├── backend/
-│   ├── nest-cli.json
-│   ├── ormconfig.ts
-│   ├── package.json                  # Deps: nestjs, typeorm, etc.
+├── backend/                          # NestJS бэкенд
 │   ├── src/
-│   │   ├── app.module.ts             # Root (imports new entities)
-│   │   ├── main.ts                   # Bootstrap
-│   │   ├── common/
-│   │   │   ├── http-exception.filter.ts
-│   │   │   ├── jwt-auth.guard.ts
-│   │   │   ├── local-auth.guard.ts
-│   │   │   ├── roles.decorator.ts    # Updated for new roles
-│   │   │   ├── roles.guard.ts        # Updated for new roles check
-│   │   │   └── winston.config.ts
-│   │   ├── config/config.module.ts
-│   │   ├── auth/                     # Updated: roles in DTO
-│   │   │   ├── auth.controller.ts
-│   │   │   ├── auth.dto.ts           # Updated: enum Role expanded
+│   │   ├── app.module.ts             # Root модуль, импорты всех модулей
+│   │   ├── main.ts                   # Entry point (bootstrap)
+│   │   ├── common/                   # Shared: filters, guards, interceptors
+│   │   │   ├── filters/              # e.g., http-exception.filter.ts
+│   │   │   ├── guards/               # e.g., roles.guard.ts (JWT-based)
+│   │   │   └── interceptors/         # e.g., logging.interceptor.ts
+│   │   ├── config/                   # ConfigService для .env
+│   │   │   └── config.module.ts
+│   │   ├── auth/                     # Модуль Auth (приоритет 1)
 │   │   │   ├── auth.module.ts
+│   │   │   ├── auth.controller.ts
 │   │   │   ├── auth.service.ts
-│   │   │   └── jwt.strategy.ts
-│   │   ├── users/                    # Updated: entity with new roles
-│   │   │   ├── user.entity.ts        # Updated: enum Role expanded
-│   │   │   ├── users.controller.ts
-│   │   │   ├── users.dto.ts
+│   │   │   ├── auth.dto.ts           # Login/Register DTO с class-validator
+│   │   │   ├── jwt.strategy.ts       # Passport JWT
+│   │   │   └── entities/             # User entity (shared с users)
+│   │   ├── users/                    # Модуль Users (приоритет 2)
 │   │   │   ├── users.module.ts
-│   │   │   └── users.service.ts
-│   │   ├── recipes/                  # Updated: fillings entity
-│   │   │   ├── recipe.entity.ts
-│   │   │   ├── fillings.entity.ts    # New: Editable fillings DB
-│   │   │   ├── products.entity.ts    # New: Product types DB
-│   │   │   ├── recipes.controller.ts
-│   │   │   ├── recipes.dto.ts
+│   │   │   ├── users.controller.ts
+│   │   │   ├── users.service.ts
+│   │   │   ├── users.repository.ts   # TypeORM repo
+│   │   │   └── users.dto.ts          # DTO для профилей, ролей
+│   │   ├── recipes/                  # Модуль Recipes (приоритет 3)
 │   │   │   ├── recipes.module.ts
-│   │   │   └── recipes.service.ts    # Updated: fetch fillings/products
-│   │   ├── suppliers/
-│   │   │   ├── supplier.entity.ts
-│   │   │   ├── suppliers.controller.ts
-│   │   │   ├── suppliers.dto.ts
+│   │   │   ├── recipes.controller.ts
+│   │   │   ├── recipes.service.ts
+│   │   │   ├── recipes.repository.ts
+│   │   │   ├── recipes.entity.ts     # Entity с ингредиентами (JSONB)
+│   │   │   └── recipes.dto.ts
+│   │   ├── suppliers/                # Модуль Suppliers (приоритет 4)
 │   │   │   ├── suppliers.module.ts
-│   │   │   └── suppliers.service.ts
-│   │   ├── pricing/
-│   │   │   ├── pricing.controller.ts
-│   │   │   ├── pricing.dto.ts
+│   │   │   ├── suppliers.controller.ts
+│   │   │   ├── suppliers.service.ts
+│   │   │   ├── suppliers.repository.ts
+│   │   │   ├── suppliers.entity.ts
+│   │   │   └── suppliers.dto.ts
+│   │   ├── pricing/                  # Модуль Calculator (приоритет 5)
 │   │   │   ├── pricing.module.ts
-│   │   │   └── pricing.service.ts
-│   │   ├── constructor/              # Updated: product type, 3 photos, fillings from DB
-│   │   │   ├── constructor.controller.ts # Updated: fetch products/fillings
-│   │   │   ├── constructor.dto.ts        # Updated: productType, designPhotos array
+│   │   │   ├── pricing.controller.ts
+│   │   │   ├── pricing.service.ts    # Динамическое ценообразование
+│   │   │   └── pricing.dto.ts        # Input для расчетов
+│   │   ├── constructor/              # Модуль Constructor (приоритет 6)
 │   │   │   ├── constructor.module.ts
-│   │   │   └── constructor.service.ts    # Updated: dynamic validation by type
-│   │   ├── orders/
-│   │   │   ├── order.entity.ts
-│   │   │   ├── orders.controller.ts      # Updated: @Roles for sales_manager
-│   │   │   ├── orders.dto.ts
+│   │   │   ├── constructor.controller.ts
+│   │   │   ├── constructor.service.ts # Wizard логика, JSON сериализация
+│   │   │   └── constructor.dto.ts    # Params: colors, fillings, tiers
+│   │   ├── orders/                   # Модуль Orders (приоритет 7)
 │   │   │   ├── orders.module.ts
-│   │   │   └── orders.service.ts
-│   │   ├── payments/
+│   │   │   ├── orders.controller.ts
+│   │   │   ├── orders.service.ts     # Создание заказов, статусы
+│   │   │   ├── orders.repository.ts
+│   │   │   ├── orders.entity.ts      # С JSON params от constructor
+│   │   │   └── orders.dto.ts
+│   │   ├── payments/                 # Модуль Payments (приоритет 8)
+│   │   │   ├── payments.module.ts    # Расширяемый: dynamic modules для новых систем
 │   │   │   ├── payments.controller.ts
-│   │   │   ├── payments.dto.ts
-│   │   │   ├── payments.module.ts
-│   │   │   ├── payments.service.ts
-│   │   │   ├── yookassa.gateway.ts
-│   │   │   └── tinkoff.gateway.ts
-│   │   ├── geolocation/                  # Updated: @Roles for logistics_manager
-│   │   │   ├── geolocation.controller.ts
-│   │   │   ├── geolocation.dto.ts
+│   │   │   ├── payments.service.ts   # Yookassa + Tinkoff, webhooks
+│   │   │   └── payments.dto.ts
+│   │   ├── geolocation/              # Модуль Geolocation (приоритет 9)
 │   │   │   ├── geolocation.module.ts
-│   │   │   └── geolocation.service.ts
-│   │   ├── admin/                        # Updated: CRUD for fillings/products (editable by admin/baker)
-│   │   │   ├── admin.controller.ts
-│   │   │   ├── admin.dto.ts
+│   │   │   ├── geolocation.controller.ts
+│   │   │   ├── geolocation.service.ts # Назначение кондитера по coords
+│   │   │   └── geolocation.dto.ts
+│   │   ├── admin/                    # Модуль Admin (приоритет 10)
 │   │   │   ├── admin.module.ts
-│   │   │   └── admin.service.ts          # Updated: edit fillings/products
-│   │   ├── integrations/
-│   │   │   ├── integrations.module.ts
-│   │   │   ├── delivery.service.ts
-│   │   │   ├── notifications.service.ts
-│   │   │   └── onec.service.ts
-│   │   └── migrations/
-│   │       ├── CreateUserTable.ts
-│   │       ├── CreateRecipeTable.ts
-│   │       ├── CreateSupplierTable.ts
-│   │       ├── CreateOrderTable.ts
-│   │       ├── CreateProductsTable.ts   # New
-│   │       └── CreateFillingsTable.ts   # New
-│   ├── test/
-│   │   ├── auth.service.spec.ts
-│   │   ├── admin.service.spec.ts
-│   │   ├── orders.service.spec.ts
-│   │   └── constructor.service.spec.ts  # New
-│   └── tsconfig.json
-├── frontend/
-│   ├── cypress/
-│   │   └── e2e/
-│   │       ├── adminCharts.cy.ts
-│   │       ├── constructor.cy.ts        # Updated: product type, photos
-│   │       └── orders.cy.ts
-│   ├── index.html
-│   ├── package.json
-│   ├── postcss.config.js
-│   ├── public/
+│   │   │   ├── admin.controller.ts   # Дашборды, аналитика
+│   │   │   ├── admin.service.ts      # Графики (sales, fillings popularity)
+│   │   │   └── admin.dto.ts
+│   │   └── integrations/             # Модуль Integrations (приоритет 11)
+│   │       ├── integrations.module.ts
+│   │       ├── delivery/             # Sub: CDEK + Yandex Delivery
+│   │       │   ├── delivery.service.ts
+│   │       │   └── delivery.dto.ts
+│   │       ├── notifications/        # Sub: Telegram bot, SendPulse
+│   │       │   ├── notifications.service.ts
+│   │       │   └── notifications.dto.ts
+│   │       └── onec/                 # Sub: 1C export (cron)
+│   │           └── onec.service.ts
+│   ├── test/                         # Jest unit tests
+│   │   └── *.spec.ts                 # По модулям
+│   ├── .env.example                  # Env template
+│   ├── tsconfig.json                 # TS config
+│   ├── nest-cli.json                 # Nest CLI
+│   └── package.json                  # Deps: nestjs, typeorm, pg, redis, etc.
+├── frontend/                         # React + Vite фронтенд (основан на прототипе)
+│   ├── public/                       # Assets: logos, images for cakes
 │   ├── src/
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   ├── vite-env.d.ts
-│   │   ├── components/
-│   │   │   ├── ui/
-│   │   │   ├── auth/
-│   │   │   │   ├── Login.tsx
-│   │   │   │   └── Register.tsx          # Updated: role select
-│   │   │   ├── admin/
-│   │   │   │   ├── AdminDashboard.tsx
-│   │   │   │   ├── SalesChart.tsx
-│   │   │   │   ├── FillingsPopularityChart.tsx
-│   │   │   │   └── ConstructorConversionChart.tsx
-│   │   │   └── cake-builder/
-│   │   │       ├── WizardSteps.tsx      # Updated: product select, dynamic steps, 3 photos
-│   │   │       ├── ProductSelection.tsx # New: Item choice
-│   │   │       ├── ColorSelection.tsx
-│   │   │       ├── FillingSelection.tsx # Updated: from API, max 5
-│   │   │       ├── TierSelection.tsx
-│   │   │       ├── UploadDesign.tsx     # New: 3 photos upload
-│   │   │       ├── UploadSketch.tsx
-│   │   │       └── PreviewPrice.tsx
-│   │   ├── hooks/
-│   │   │   ├── useAuth.ts
-│   │   │   ├── useAdminData.ts
-│   │   │   └── useProducts.ts           # New: Fetch products/fillings
-│   │   ├── services/
-│   │   │   └── api.ts                   # Updated: endpoints for products/fillings
-│   │   ├── types/
-│   │   │   └── index.ts                 # Updated: ProductType, Filling
-│   │   └── utils/
-│   │       └── jsonSerializer.ts
-│   ├── tailwind.config.js
-│   ├── tsconfig.json
-│   ├── tsconfig.node.json
-│   └── vite.config.ts
-
-
-## Обновления (15.10.2025)
-- Вынесен enum Role/ProductType в common/types.ts
-- Исправлено дублирование endpoints в orders.controller.ts
-- Синхронизированы миграции (CreateUserTable.ts, CreateProductsTable.ts, CreateFillingsTable.ts)
-- Добавлены начальные данные для products/fillings
+│   │   ├── components/               # UI: shadcn-ui + custom
+│   │   │   ├── ui/                   # shadcn: button, input, etc.
+│   │   │   ├── auth/                 # Login/Register forms
+│   │   │   ├── admin/                # Dashboards, charts (recharts)
+│   │   │   └── cake-builder/         # Wizard: steps for constructor
+│   │   ├── hooks/                    # Custom: useAuth, usePricing
+│   │   ├── services/                 # API calls (axios)
+│   │   ├── types/                    # Shared DTO types
+│   │   ├── App.tsx                   # Root (router)
+│   │   ├── main.tsx                  # Entry
+│   │   └── vite-env.d.ts             # Env types
+│   ├── index.html                    # Vite template
+│   ├── vite.config.ts                # Vite config (proxies to backend)
+│   ├── tailwind.config.js            # Tailwind
+│   ├── postcss.config.js             # PostCSS
+│   ├── tsconfig.json                 # TS config
+│   ├── cypress/                      # E2E tests
+│   │   └── e2e/                      # Specs for wizard, orders
+│   └── package.json                  # Deps: react, shadcn-ui, tailwind, axios, etc.
+├── docker-compose.yml                # Services: postgres, redis, backend, frontend
+├── .gitignore                        # Standard
+├── README.md                         # Setup, deploy, architecture
+└── package.json                      # Root (если нужно workspaces)
