@@ -13,44 +13,53 @@ import { Request, Response } from 'express';
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(HttpExceptionFilter.name);
 
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const res = ctx.getResponse<Response>();
+    const req = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let errorResponse: any = {
+      statusCode: status,
       message: 'Internal server error',
     };
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
-      const res = exception.getResponse();
-      // normalize response
-      if (typeof res === 'string') {
-        errorResponse.message = res;
-      } else if (typeof res === 'object' && res !== null) {
-        errorResponse = { ...(res as object) };
+      const excResp = exception.getResponse();
+      // excResp can be string or object
+      if (typeof excResp === 'string') {
+        errorResponse = { statusCode: status, message: excResp };
+      } else {
+        errorResponse = {
+          statusCode: status,
+          ...((excResp as object) || {}),
+        };
       }
-    } else if (exception instanceof Error) {
-      errorResponse.message = exception.message;
+    } else if (exception && (exception as any).message) {
+      errorResponse = {
+        statusCode: status,
+        message: (exception as any).message,
+      };
     }
 
     const payload = {
-      statusCode: status,
+      statusCode: errorResponse.statusCode,
+      message: errorResponse.message || 'Unexpected error',
+      details: errorResponse.details || null,
       timestamp: new Date().toISOString(),
-      path: request.url,
-      ...errorResponse,
+      path: req.url,
+      method: req.method,
     };
 
-    // structured logging; replace with Winston + requestId if configured
+    // Log full exception for internal debugging
     this.logger.error({
       message: payload.message,
-      status,
-      path: request.url,
-      stack: exception instanceof Error ? exception.stack : undefined,
+      path: req.url,
+      method: req.method,
+      stack: (exception as any).stack || null,
     });
 
-    response.status(status).json(payload);
+    res.status(payload.statusCode).json(payload);
   }
 }

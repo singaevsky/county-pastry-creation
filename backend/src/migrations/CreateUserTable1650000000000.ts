@@ -15,14 +15,7 @@ export class CreateUserTable1650000000000 implements MigrationInterface {
       );
     `);
   }
-// ... up()
-await queryRunner.query(`
-  CREATE TABLE "users" (
-    ...
-    "role" VARCHAR NOT NULL CHECK (role IN ('client', 'baker', 'sales_manager', 'logistics_manager', 'admin')),
-    ...
-  );
-`);
+
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE "users";`);
   }
