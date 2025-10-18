@@ -9,15 +9,6 @@ export class CreateFillingsTable1729000000004 implements MigrationInterface {
         "cost" DECIMAL NOT NULL
       );
     `);
-    // Начальные данные
-    await queryRunner.query(`
-      INSERT INTO "fillings" (name, cost) VALUES
-      ('cream', 100),
-      ('chocolate', 120),
-      ('fruit', 150),
-      ('nut', 130),
-      ('caramel', 110);
-    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

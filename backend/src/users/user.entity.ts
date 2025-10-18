@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { Role } from '../common/types';
 
 @Entity('users')
 export class User {
@@ -23,10 +22,10 @@ export class User {
 
   /**
    * Роль пользователя
-   * @enum {string} client, baker, sales_manager, logistics_manager, admin
+   * @enum {string} client - Пользователь, baker - Кондитер, sales_manager - Менеджер продаж, logistics_manager - Менеджер логистики, admin - Администратор сайта
    */
-  @Column({ type: 'enum', enum: Role })
-  role: Role;
+  @Column({ type: 'enum', enum: ['client', 'baker', 'sales_manager', 'logistics_manager', 'admin'] })
+  role: string;
 
   /**
    * Геокоординаты (широта) для кондитеров
