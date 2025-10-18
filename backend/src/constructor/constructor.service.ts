@@ -59,3 +59,24 @@ export class ConstructorService {
 
   // other methods: updateDraft, getDraftsForUser, fetchById etc.
 }
+import { Injectable } from '@nestjs/common';
+import { PriceCalculatorService } from './services/price-calculator.service';
+import { DesignUploadService } from './services/design-upload.service';
+import { Product } from '../recipes/products.entity';
+
+@Injectable()
+export class ConstructorService {
+  constructor(
+    private readonly priceCalculator: PriceCalculatorService,
+    private readonly designUpload: DesignUploadService,
+  ) {}
+
+  calculatePrice(product: Product, fillings: any[], options?: any) {
+    return this.priceCalculator.calculate(product, fillings, options);
+  }
+
+  async uploadDesign(file: Express.Multer.File, dest: string) {
+    return this.designUpload.validateAndSave(file, dest);
+  }
+}
+
