@@ -14,11 +14,11 @@ export const UploadDesign: React.FC<Props> = ({ onUpload }) => {
 
     const file = e.target.files[0];
     if (!['image/png', 'image/jpeg'].includes(file.type)) {
-      setError('Only PNG or JPEG files allowed');
+      setError('Допустимы только файлы PNG или JPEG');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setError('File too large, max 5MB');
+      setError('Файл слишком большой, максимум 5MB');
       return;
     }
 
@@ -31,15 +31,27 @@ export const UploadDesign: React.FC<Props> = ({ onUpload }) => {
       });
       onUpload(res.data.fileName);
     } catch (err) {
-      setError('Upload failed');
+      setError('Не удалось загрузить файл');
       console.error(err);
     }
   };
-
   return (
     <div className="upload-design">
-      <input type="file" accept="image/png, image/jpeg" onChange={handleChange} />
-      {error && <p className="error">{error}</p>}
+      <label htmlFor="design-upload" className="sr-only">
+        Загрузить дизайн торта
+      </label>
+      <input
+        id="design-upload"
+        type="file"
+        accept="image/png, image/jpeg"
+        onChange={handleChange}
+        aria-describedby="file-requirements"
+        title="Выберите изображение дизайна торта"
+      />
+      {error && <p className="error" role="alert">{error}</p>}
+      <p id="file-requirements" className="text-sm text-gray-600">
+        Допустимые форматы: PNG, JPEG. Максимальный размер: 5MB
+      </p>
     </div>
   );
 };

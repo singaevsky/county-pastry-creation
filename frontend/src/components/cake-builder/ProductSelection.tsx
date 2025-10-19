@@ -13,6 +13,24 @@ interface Props {
   onSelect: (slug: string) => void;
 }
 
+export default function ProductSelection({ onSelect }) {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    api.get('/products').then(res => setProducts(res.data));
+  }, []);
+
+  return (
+    <div>
+      {products.map(p => (
+        <div key={p.id} onClick={() => onSelect(p)}>
+          {p.name} - {p.basePrice} ₽
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export const ProductSelection: React.FC<Props> = ({ selected, onSelect }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);

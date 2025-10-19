@@ -8,13 +8,23 @@ export class FillingDto {
   @IsNumber()
   qty: number;
 }
-
+// backend/src/constructor/dto/create-constructor.dto.ts
 export class CreateConstructorDto {
-  @IsString()
   name: string;
+  productType: string;
+  options?: Record<string, any>;
+  tiers?: number;
+  metadata?: Record<string, any>;
+}
+
+export class CreateOrderDto {
+  @IsString()
+  productSlug: string;
+  @IsString()
+  userId: string;
 
   @IsString()
-  productType: string;
+
 
   @IsNumber()
   @IsOptional()

@@ -6,6 +6,31 @@ import helmet from 'helmet';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
+
+import * as fs from 'fs';
+import { ConfigService } from '@nestjs/config';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService);
+  const sslKeyPath = configService.get('SSL_KEY_PATH');
+  const sslCertPath = configService.get('SSL_CERT_PATH');
+
+  if (sslKeyPath && sslCertPath) {
+    const httpsOptions = {
+      key: fs.readFileSync(sslKeyPath),
+      cert: fs.readFileSync(sslCertPath),
+    };
+    await app.listen(443, '0.0.0.0', httpsOptions);
+  } else {
+    await app.listen(process.env.PORT || 3000);
+  }
+
+  console.log(`Application is running on: ${await app.getUrl()}`);
+}
+bootstrap();
+
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule, { cors: true });

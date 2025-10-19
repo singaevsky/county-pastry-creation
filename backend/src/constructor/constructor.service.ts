@@ -6,8 +6,6 @@ import { Repository } from 'typeorm';
 import { PriceCalculatorService } from './price-calculator.service';
 import { DesignUploadService } from '../upload/design.service';
 import { CreateConstructorDto } from './dto/create-constructor.dto';
-import { Product } from '../recipes/products.entity';
-import { Filling } from '../recipes/fillings.entity';
 
 @Injectable()
 export class ConstructorService {
@@ -20,11 +18,7 @@ export class ConstructorService {
     private readonly designUpload: DesignUploadService,
   ) {}
 
-  async createDraft(
-    userId: number,
-    dto: CreateConstructorDto,
-    files?: Express.Multer.File[],
-  ) {
+  async createDraft(userId: number, dto: CreateConstructorDto, files?: Express.Multer.File[]) {
     if (dto.tiers && dto.tiers > 5) {
       throw new BadRequestException('Maximum tiers is 5');
     }
@@ -32,12 +26,12 @@ export class ConstructorService {
     const uploaded: string[] = [];
     if (files && files.length) {
       for (const f of files) {
-        const url = await this.uploadDesign(f, 'constructor');
+        const url = await this.designUpload.uploadFile(f);
         uploaded.push(url);
       }
     }
 
-    const price = await this.calculatePrice(dto);
+    const price = await this.priceCalculator.calculate(dto);
 
     const entity = this.repo.create({
       userId,
@@ -59,18 +53,4 @@ export class ConstructorService {
     draft.status = 'pending_payment';
     return this.repo.save(draft);
   }
-
-  async calculatePrice(dto: CreateConstructorDto): Promise<number> {
-    const product = new Product();
-    product.id = dto.productId;
-
-    const fillings: Filling[] = dto.fillings || [];
-    return this.priceCalculator.calculate(product, fillings, dto.options);
-  }
-
-  async uploadDesign(file: Express.Multer.File, dest: string): Promise<string> {
-    return this.designUpload.validateAndSave(file, dest);
-  }
-
-  // TODO: updateDraft, getDraftsForUser, fetchById
 }

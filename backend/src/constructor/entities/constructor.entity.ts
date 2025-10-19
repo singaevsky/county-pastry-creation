@@ -1,5 +1,5 @@
 // backend/src/constructor/entities/constructor.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('constructors')
 export class ConstructorEntity {
@@ -25,14 +25,8 @@ export class ConstructorEntity {
   price: number;
 
   @Column({ default: 'draft' })
-  status: 'draft' | 'pending_payment' | 'completed';
+  status: string;
 
   @Column('jsonb', { default: {} })
   metadata: Record<string, any>;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

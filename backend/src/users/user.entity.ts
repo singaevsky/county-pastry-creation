@@ -1,18 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
-  @Column({ type: 'enum', enum: ['client', 'admin', 'manager', 'baker'] })
-  role: string;
+  @Column({ type: 'enum', enum: ['client', 'admin', 'manager', 'baker'], default: 'client' })
+  role!: string;
 
   @Column({ nullable: true })
   geoLat?: number; // Для кондитеров
@@ -21,5 +21,31 @@ export class User {
   geoLong?: number;
 
   @Column({ default: 0 })
-  workload: number; // Загрузка кондитера
+  workload!: number; // Загрузка кондитера
+
+  @Column({ default: false })
+  isEmailVerified!: boolean;
+
+  @Column()
+  firstName!: string;
+
+  @Column()
+  lastName!: string;
+
+  @Column({ nullable: true })
+  phone?: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
