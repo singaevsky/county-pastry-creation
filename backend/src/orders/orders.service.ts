@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { CreateOrderDto } from '../constructor/dto/create-order.dto';
 import { UsersService } from '../users/users.service';
@@ -11,7 +11,8 @@ import { OrderStatus, PaymentStatus } from './interfaces/order.interface';
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectRepository(Order) private readonly orderRepo: Repository<Order>,
+    @Inject(getRepositoryToken(Order))
+    private readonly orderRepo: Repository<Order>,
     private readonly usersService: UsersService,
     private readonly productsService: ProductsService,
     private readonly priceCalculator: PriceCalculatorService,

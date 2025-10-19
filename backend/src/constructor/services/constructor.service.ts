@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { CakeDesign } from '../entities/cake-design.entity';
 import { CakeSize } from '../entities/cake-size.entity';
 import { CakeLayer } from '../entities/cake-layer.entity';
@@ -17,15 +17,15 @@ import {
 @Injectable()
 export class ConstructorService {
   constructor(
-    @InjectRepository(CakeDesign)
+    @Inject(getRepositoryToken(CakeDesign))
     private readonly cakeDesignRepository: Repository<CakeDesign>,
-    @InjectRepository(CakeSize)
+    @Inject(getRepositoryToken(CakeSize))
     private readonly sizeRepository: Repository<CakeSize>,
-    @InjectRepository(CakeLayer)
+    @Inject(getRepositoryToken(CakeLayer))
     private readonly layerRepository: Repository<CakeLayer>,
-    @InjectRepository(CakeFilling)
+    @Inject(getRepositoryToken(CakeFilling))
     private readonly fillingRepository: Repository<CakeFilling>,
-    @InjectRepository(CakeDecoration)
+    @Inject(getRepositoryToken(CakeDecoration))
     private readonly decorationRepository: Repository<CakeDecoration>
   ) {}
 
