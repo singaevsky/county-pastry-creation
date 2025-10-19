@@ -1,24 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { CakeSize } from '../entities/cake-size.entity';
 import { CakeLayer } from '../entities/cake-layer.entity';
 import { CakeFilling } from '../entities/cake-filling.entity';
 import { CakeDecoration } from '../entities/cake-decoration.entity';
-import { EntityTarget } from 'typeorm';
 import { CalculatePriceDto, PriceResponseDto } from '../dto/calculate-price.dto';
 import { Product, Filling } from '../interfaces/legacy-types';
 
 @Injectable()
 export class PriceCalculatorService {
   constructor(
-    @InjectRepository(CakeSize)
+    @Inject(getRepositoryToken(CakeSize))
     private readonly sizeRepository: Repository<CakeSize>,
-    @InjectRepository(CakeLayer)
+    @Inject(getRepositoryToken(CakeLayer))
     private readonly layerRepository: Repository<CakeLayer>,
-    @InjectRepository(CakeFilling)
+    @Inject(getRepositoryToken(CakeFilling))
     private readonly fillingRepository: Repository<CakeFilling>,
-    @InjectRepository(CakeDecoration)
+    @Inject(getRepositoryToken(CakeDecoration))
     private readonly decorationRepository: Repository<CakeDecoration>,
   ) {}
 

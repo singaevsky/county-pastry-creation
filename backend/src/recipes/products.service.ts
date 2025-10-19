@@ -1,13 +1,13 @@
 // backend/src/recipes/products.service.ts
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from './entities/product.entity';
+import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    @InjectRepository(Product)
+    @Inject(getRepositoryToken(Product))
     private readonly repo: Repository<Product>,
   ) {}
 
