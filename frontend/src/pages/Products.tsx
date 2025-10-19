@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/lib/supabase";
+import ResponsiveCatalogGrid from "@/components/ResponsiveCatalogGrid";
 
 const categories = ["Все", "cakes", "pastries", "custom"];
 const categoryNames: Record<string, string> = {
@@ -72,6 +73,9 @@ const Products = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
+
+      {/* Новый компонент каталога с 5 карточками */}
+      <ResponsiveCatalogGrid />
 
       <section className="py-20 gradient-soft">
         <div className="container mx-auto px-4">

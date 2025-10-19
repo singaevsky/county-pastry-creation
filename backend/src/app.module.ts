@@ -7,14 +7,9 @@ import { ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 import * as redisStore from 'cache-manager-redis-store';
 import * as fs from 'fs';
 
-import {
-  ProductsController,
-  ProductsService,
-  Product,
-  FillingsController,
-  FillingsService,
-  Filling
-} from './recipes';
+import { RecipesModule } from './recipes/recipes.module';
+import { SuppliersModule } from './suppliers/suppliers.module';
+import { CareersModule } from './careers/careers.module';
 
 // Domain modules
 import { AuthModule } from './auth/auth.module';
@@ -26,7 +21,6 @@ import { ConstructorModule } from './constructor/constructor.module';
 // import { AdminModule } from './admin/admin.module';
 // import { GeolocationModule } from './geolocation/geolocation.module';
 // import { UploadModule } from './upload/upload.module';
-import { RecipesModule } from './recipes/recipes.module';
 
 @Module({
   imports: [
@@ -101,6 +95,8 @@ import { RecipesModule } from './recipes/recipes.module';
     // PaymentsModule,
     ConstructorModule,
     RecipesModule,
+    SuppliersModule,
+    CareersModule,
   ],
 })
 export class AppModule {}

@@ -7,7 +7,9 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'user',
   password: process.env.DB_PASS || 'pass',
   database: process.env.DB_NAME || 'pastry_db',
-  entities: ['src/**/*.entity.ts'],
-  migrations: ['src/migrations/*.ts'],
+  entities: [__dirname + '/src/**/*.entity{.ts,.js}'],
+  migrations: [__dirname + '/src/migrations/*{.ts,.js}'],
   synchronize: false, // Prod: false
+  logging: process.env.TYPEORM_LOGGING === 'true',
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });

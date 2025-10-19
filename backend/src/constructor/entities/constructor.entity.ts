@@ -1,13 +1,17 @@
-// backend/src/constructor/entities/constructor.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('constructors')
 export class ConstructorEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-  @Column()
-  userId!: number;
+  @Column({ type: 'uuid' })
+  userId!: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
 
   @Column()
   name!: string;
@@ -24,9 +28,19 @@ export class ConstructorEntity {
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
   price!: number;
 
-  @Column({ default: 'draft' })
-  status!: string;
+  @Column({ 
+    type: 'enum',
+    enum: ['draft', 'saved', 'ordered'],
+    default: 'draft'
+  })
+  status!: 'draft' | 'saved' | 'ordered';
 
   @Column('jsonb', { default: {} })
   metadata!: Record<string, any>;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

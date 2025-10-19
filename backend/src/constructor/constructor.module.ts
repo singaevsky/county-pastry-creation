@@ -8,6 +8,7 @@ import { CakeSize } from './entities/cake-size.entity';
 import { CakeLayer } from './entities/cake-layer.entity';
 import { CakeFilling } from './entities/cake-filling.entity';
 import { CakeDecoration } from './entities/cake-decoration.entity';
+import { ConstructorEntity } from './entities/constructor.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { CakeDecoration } from './entities/cake-decoration.entity';
       CakeSize,
       CakeLayer,
       CakeFilling,
-      CakeDecoration
+      CakeDecoration,
+      ConstructorEntity
     ])
   ],
   controllers: [ConstructorController],
