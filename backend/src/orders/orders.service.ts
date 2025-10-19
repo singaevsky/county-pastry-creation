@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Order } from './orders.entity';
+import { Order } from './entities/order.entity';
 import { CreateOrderDto } from '../constructor/dto/create-order.dto';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../recipes/products.service';
 import { PriceCalculatorService } from '../constructor/services/price-calculator.service';
+import { OrderStatus, PaymentStatus } from './interfaces/order.interface';
 
 @Injectable()
 export class OrdersService {
@@ -16,32 +17,33 @@ export class OrdersService {
     private readonly priceCalculator: PriceCalculatorService,
   ) {}
 
-  async create(userId: number, dto: CreateOrderDto) {
-  const user = await this.usersService.findById(userId);
-  if (!user) throw new NotFoundException('User not found');
+  async create(userId: string, dto: CreateOrderDto) {
+    const user = await this.usersService.findOne(userId);
+    if (!user) throw new NotFoundException('User not found');
 
-  const product = await this.productsService.findBySlug(dto.productSlug);
-  if (!product) throw new NotFoundException('Product not found');
+    const product = await this.productsService.findBySlug(dto.productSlug);
+    if (!product) throw new NotFoundException('Product not found');
 
-  if (!dto.fillings || dto.fillings.length === 0) {
-    throw new BadRequestException('At least one filling must be selected');
-  }
+    if (!dto.fillings || dto.fillings.length === 0) {
+      throw new BadRequestException('At least one filling must be selected');
+    }
 
-  // Приведение к типу { fillingId, qty }
-  const fillings = dto.fillings.map(f => ({ fillingId: f.id, qty: f.qty }));
+    const fillings = dto.fillings.map(f => ({
+      id: f.fillingId.toString(),
+      name: `Filling ${f.fillingId}`, // Replace with actual filling name from service
+      quantity: f.qty,
+      price: 0, // Replace with actual price calculation
+    }));
 
-  const totalPrice = this.priceCalculator.calculate(product, fillings);
+    const order = this.orderRepo.create({
+      clientId: userId,
+      status: 'PENDING' as OrderStatus,
+      paymentStatus: 'PENDING' as PaymentStatus,
+      totalAmount: dto.quantity * product.price,
+      items: fillings
+    });
 
-  const order = this.orderRepo.create({
-    user,
-    product,
-    fillings,
-    quantity: dto.quantity,
-    totalPrice,
-    status: 'pending',
-  });
-
-  return this.orderRepo.save(order);
+    return this.orderRepo.save(order);
 
   }
 }

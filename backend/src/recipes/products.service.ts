@@ -1,7 +1,7 @@
 // backend/src/recipes/products.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from './products.entity';
+import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -15,7 +15,11 @@ export class ProductsService {
     return this.repo.find({ where: { isActive: true } });
   }
 
-  async findBySlug(slug: string): Promise<Product> {
+  async findBySlug(slug: string): Promise<Product | null> {
     return this.repo.findOne({ where: { slug, isActive: true } });
+  }
+
+  async findById(id: string): Promise<Product | null> {
+    return this.repo.findOne({ where: { id, isActive: true } });
   }
 }

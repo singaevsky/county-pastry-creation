@@ -30,7 +30,20 @@ export class ConstructorService {
   ) {}
 
   async create(createCakeDesignDto: CreateCakeDesignDto): Promise<CakeDesign> {
-    const cakeDesign = this.cakeDesignRepository.create(createCakeDesignDto);
+    // Преобразуем DTO в entity
+    const cakeDesign = new CakeDesign();
+    cakeDesign.name = createCakeDesignDto.name;
+    cakeDesign.description = createCakeDesignDto.description;
+    cakeDesign.price = createCakeDesignDto.price || 0;
+
+    if (createCakeDesignDto.layers) {
+      cakeDesign.layers = await Promise.all(
+        createCakeDesignDto.layers.map(layerId =>
+          this.layerRepository.findOneOrFail({ where: { id: layerId } })
+        )
+      );
+    }
+
     return this.cakeDesignRepository.save(cakeDesign);
   }
 

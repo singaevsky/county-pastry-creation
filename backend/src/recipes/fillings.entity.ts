@@ -4,17 +4,17 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('fillings')
 export class Filling {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  price: number;
+  price!: number;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column('jsonb', { default: {} })
-  options: Record<string, any>;
+  options!: Record<string, any>;
 }

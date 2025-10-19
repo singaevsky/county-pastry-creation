@@ -4,29 +4,29 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('constructors')
 export class ConstructorEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  userId: number;
+  userId!: number;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  productType: string;
+  productType!: string;
 
   @Column('jsonb', { default: {} })
-  options: Record<string, any>;
+  options!: Record<string, any>;
 
   @Column('jsonb', { default: [] })
-  designImages: string[];
+  designImages!: string[];
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
-  price: number;
+  price!: number;
 
   @Column({ default: 'draft' })
-  status: string;
+  status!: string;
 
   @Column('jsonb', { default: {} })
-  metadata: Record<string, any>;
+  metadata!: Record<string, any>;
 }

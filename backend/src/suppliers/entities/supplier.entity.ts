@@ -3,11 +3,11 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('suppliers')
 export class Supplier {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ type: 'decimal' })
-  costCoefficient: number; // Коэффициент стоимости
+  costCoefficient!: number; // Коэффициент стоимости
 }

@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { api } from '../../services/api';
 
+interface UploadResponse {
+  fileName: string;
+}
+
 interface Props {
   onUpload: (fileName: string) => void;
 }
@@ -26,10 +30,10 @@ export const UploadDesign: React.FC<Props> = ({ onUpload }) => {
     formData.append('file', file);
 
     try {
-      const res = await api.post('/constructor/upload', formData, {
+      const { data } = await api.post<UploadResponse>('/constructor/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      onUpload(res.data.fileName);
+      onUpload(data.fileName);
     } catch (err) {
       setError('Не удалось загрузить файл');
       console.error(err);

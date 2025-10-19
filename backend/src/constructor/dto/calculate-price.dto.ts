@@ -35,19 +35,47 @@ export class CalculatePriceDto {
   @IsString()
   sizeId!: string;
 
-  @ApiProperty({ type: [ComponentDto] })
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        quantity: { type: 'number' }
+      }
+    }
+  })
   @ValidateNested({ each: true })
   @Type(() => ComponentDto)
   @IsArray()
   layers!: ComponentDto[];
 
-  @ApiProperty({ type: [ComponentDto] })
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        quantity: { type: 'number' }
+      }
+    }
+  })
   @ValidateNested({ each: true })
   @Type(() => ComponentDto)
   @IsArray()
   fillings!: ComponentDto[];
 
-  @ApiProperty({ type: [ComponentDto], required: false })
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        quantity: { type: 'number' }
+      }
+    },
+    required: false
+  })
   @ValidateNested({ each: true })
   @Type(() => ComponentDto)
   @IsArray()

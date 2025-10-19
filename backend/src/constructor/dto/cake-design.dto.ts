@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsArray, IsOptional, ValidateNested, IsUUID, IsEnum } from 'class-validator';
+import { IsString, IsNumber, IsArray, IsOptional, ValidateNested, IsUUID, IsEnum, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class LayerCustomizationDto {
@@ -67,6 +67,14 @@ export class CreateCakeDesignDto {
 
   @IsUUID()
   userId!: string;
+
+  @IsNumber()
+  @IsOptional()
+  price?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }
 
 export class UpdateCakeDesignDto {
@@ -100,4 +108,8 @@ export class UpdateCakeDesignDto {
   @IsOptional()
   @IsString()
   specialInstructions?: string;
+
+  @IsOptional()
+  @IsNumber()
+  price?: number;
 }

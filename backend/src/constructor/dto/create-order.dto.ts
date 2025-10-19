@@ -3,25 +3,25 @@ import { Type } from 'class-transformer';
 
 class FillingItem {
   @IsNumber()
-  fillingId: number;
+  fillingId!: number;
 
   @IsNumber()
   @Min(1)
-  qty: number;
+  qty!: number;
 }
 
 export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
-  productSlug: string;
+  productSlug!: string;
 
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => FillingItem)
-  fillings: FillingItem[];
+  fillings!: FillingItem[];
 
   @IsNumber()
   @Min(1)
-  quantity: number;
+  quantity!: number;
 }

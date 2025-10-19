@@ -11,7 +11,21 @@ import * as fs from 'fs';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+  const app = await NestFactory.create(AppModule, { cors: true });
+
+  // Security
+  app.use(helmet());
+
+  // CORS configuration
+  app.enableCors({
+    origin: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : true,
+    credentials: true,
+  });
+
+  // Global pipes & filters
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const configService = app.get(ConfigService);
   const sslKeyPath = configService.get('SSL_KEY_PATH');
@@ -22,31 +36,12 @@ async function bootstrap() {
       key: fs.readFileSync(sslKeyPath),
       cert: fs.readFileSync(sslCertPath),
     };
-    await app.listen(443, '0.0.0.0', httpsOptions);
+    await app.listen(443, '0.0.0.0');
   } else {
     await app.listen(process.env.PORT || 3000);
   }
 
-  console.log(`Application is running on: ${await app.getUrl()}`);
-}
-bootstrap();
-
-async function bootstrap() {
-  const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create(AppModule, { cors: true });
-
-  // Security
-  app.use(helmet());
-
-  // CORS — подставь нужные origin в production
-  app.enableCors({
-    origin: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : true,
-    credentials: true,
-  });
-
-  // Global pipes & filters
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.useGlobalFilters(new HttpExceptionFilter());
+  logger.log(`Application is running on: ${await app.getUrl()}`);
 
   // Swagger (dev and staging)
   if (process.env.NODE_ENV !== 'production') {

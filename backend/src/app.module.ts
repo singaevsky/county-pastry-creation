@@ -21,7 +21,11 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
 import { ConstructorModule } from './constructor/constructor.module';
-import { PaymentsModule } from './payments/payments.module';
+// import { PaymentsModule } from './payments/payments.module';
+// TODO: Uncomment these imports once the corresponding modules are implemented
+// import { AdminModule } from './admin/admin.module';
+// import { GeolocationModule } from './geolocation/geolocation.module';
+// import { UploadModule } from './upload/upload.module';
 import { RecipesModule } from './recipes/recipes.module';
 
 @Module({
@@ -94,8 +98,8 @@ import { RecipesModule } from './recipes/recipes.module';
     AuthModule,
     UsersModule,
     OrdersModule,
+    // PaymentsModule,
     ConstructorModule,
-    PaymentsModule,
     RecipesModule,
   ],
 })

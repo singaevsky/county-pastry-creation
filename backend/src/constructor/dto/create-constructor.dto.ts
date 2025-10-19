@@ -3,25 +3,36 @@ import { IsString, IsOptional, IsNumber, IsArray, Max } from 'class-validator';
 
 export class FillingDto {
   @IsNumber()
-  id: number;
+  id!: number;
 
   @IsNumber()
-  qty: number;
+  qty!: number;
 }
-// backend/src/constructor/dto/create-constructor.dto.ts
+
 export class CreateConstructorDto {
-  name: string;
-  productType: string;
+  @IsString()
+  name!: string;
+
+  @IsString()
+  productType!: string;
+
+  @IsOptional()
   options?: Record<string, any>;
+
+  @IsNumber()
+  @IsOptional()
   tiers?: number;
+
+  @IsOptional()
   metadata?: Record<string, any>;
 }
 
 export class CreateOrderDto {
   @IsString()
-  productSlug: string;
+  productSlug!: string;
+
   @IsString()
-  userId: string;
+  userId!: string;
 
   @IsString()
 

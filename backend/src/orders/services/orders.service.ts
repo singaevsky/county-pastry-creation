@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindOptionsWhere } from 'typeorm';
-import { Order } from './entities/order.entity';
-import { CreateOrderDto, UpdateOrderDto } from './dto/order.dto';
-import { OrderStatus, PaymentStatus } from './interfaces/order.interface';
-import { UsersService } from '../users/users.service';
+import { Order } from '../entities/order.entity';
+import { CreateOrderDto, UpdateOrderDto } from '../dto/order.dto';
+import { OrderStatus, PaymentStatus } from '../interfaces/order.interface';
+import { UsersService } from '../../users/users.service';
 
 @Injectable()
 export class OrdersService {
@@ -18,7 +18,7 @@ export class OrdersService {
     const client = await this.usersService.findOne(clientId);
 
     const totalAmount = createOrderDto.items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
+      (sum: number, item: { price: number; quantity: number }) => sum + item.price * item.quantity,
       0
     );
 
@@ -30,7 +30,17 @@ export class OrdersService {
       paymentStatus: PaymentStatus.PENDING,
     });
 
-    return this.orderRepo.save(order);
+    const savedOrder = await this.orderRepo.save(order);
+    const fullOrder = await this.orderRepo.findOne({
+      where: { id: savedOrder.id },
+      relations: ['client', 'baker']
+    });
+
+    if (!fullOrder) {
+      throw new NotFoundException(`Order with ID "${savedOrder.id}" not found`);
+    }
+
+    return fullOrder;
   }
 
   async findAll(filters?: FindOptionsWhere<Order>): Promise<Order[]> {

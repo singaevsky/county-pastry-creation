@@ -117,7 +117,7 @@ export class PriceResponseDto {
   fillingsPrice!: number;
   decorationsPrice!: number;
   totalPrice!: number;
-  details: {
+  details!: {
     size: { name: string; price: number };
     layers: Array<{ name: string; quantity: number; price: number }>;
     fillings: Array<{ name: string; quantity: number; price: number }>;

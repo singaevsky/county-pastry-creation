@@ -15,7 +15,7 @@ export class OrdersController {
   @Post()
   @Roles('client', 'admin')
   async create(
-    @Request() req,
+    @Request() req: { user: { id: string } },
     @Body() createOrderDto: CreateOrderDto
   ): Promise<OrderResponseDto> {
     const order = await this.ordersService.create(req.user.id, createOrderDto);
@@ -30,14 +30,14 @@ export class OrdersController {
   }
 
   @Get('my-orders')
-  async findMyOrders(@Request() req): Promise<OrderResponseDto[]> {
+  async findMyOrders(@Request() req: { user: { id: string } }): Promise<OrderResponseDto[]> {
     const orders = await this.ordersService.findByClient(req.user.id);
     return orders.map(order => this.mapToResponseDto(order));
   }
 
   @Get('baker-orders')
   @Roles('baker')
-  async findBakerOrders(@Request() req): Promise<OrderResponseDto[]> {
+  async findBakerOrders(@Request() req: { user: { id: string } }): Promise<OrderResponseDto[]> {
     const orders = await this.ordersService.findByBaker(req.user.id);
     return orders.map(order => this.mapToResponseDto(order));
   }

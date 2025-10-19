@@ -17,14 +17,26 @@ export class User {
   @Column({ default: 'user' })
   role!: string;
 
-  @Column({ nullable: true })
-  firstName?: string;
+  @Column()
+  firstName!: string;
 
-  @Column({ nullable: true })
-  lastName?: string;
+  @Column()
+  lastName!: string;
 
   @Column({ nullable: true })
   phone?: string;
+
+  @Column({ default: 0 })
+  workload!: number; // Загрузка кондитера
+
+  @Column({ default: false })
+  isEmailVerified!: boolean;
+
+  @Column({ nullable: true })
+  geoLat?: number; // Для кондитеров
+
+  @Column({ nullable: true })
+  geoLong?: number;
 
   @Column({ type: 'json', nullable: true })
   address?: {
@@ -35,22 +47,10 @@ export class User {
   };
 
   @Column({ nullable: true })
-  geoLat?: number;
-
-  @Column({ nullable: true })
-  geoLong?: number;
-
-  @Column({ default: false })
-  isEmailVerified!: boolean;
-
-  @Column({ nullable: true })
   resetPasswordToken?: string;
 
   @Column({ nullable: true })
   resetPasswordExpires?: Date;
-
-  @Column({ default: 0 })
-  workload: number = 0;
 
   @Column({ default: true })
   isActive!: boolean;

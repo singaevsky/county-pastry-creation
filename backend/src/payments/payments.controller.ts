@@ -1,5 +1,5 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard'; // Assume implemented
+import { Controller, Post, Body, UseGuards, UnauthorizedException } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Assume implemented
 import { PaymentsService } from './payments.service';
 
 @Controller('payments')
@@ -8,7 +8,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('create')
-  async create(@Body('orderId') orderId: number, @Body('amount') amount: number) {
+  async create(@Body('orderId') orderId: string, @Body('amount') amount: number) {
     return this.paymentsService.createPayment(orderId, amount);
   }
 

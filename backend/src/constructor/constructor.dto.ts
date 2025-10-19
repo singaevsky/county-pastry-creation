@@ -7,12 +7,12 @@ export class ConstructorParamsDto {
 
   @IsArray()
   @MaxLength(2)
-  colors: string[];
+  colors!: string[];
 
   @IsArray()
   @MaxLength(3)
-  fillings: string[];
+  fillings!: string[];
 
   @IsNumber()
-  tiers: number;
+  tiers!: number;
 }

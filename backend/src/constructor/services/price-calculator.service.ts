@@ -5,6 +5,7 @@ import { CakeSize } from '../entities/cake-size.entity';
 import { CakeLayer } from '../entities/cake-layer.entity';
 import { CakeFilling } from '../entities/cake-filling.entity';
 import { CakeDecoration } from '../entities/cake-decoration.entity';
+import { EntityTarget } from 'typeorm';
 import { CalculatePriceDto, PriceResponseDto } from '../dto/calculate-price.dto';
 import { Product, Filling } from '../interfaces/legacy-types';
 

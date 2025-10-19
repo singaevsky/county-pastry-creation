@@ -2,9 +2,9 @@ import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards } from '@nes
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from './user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../common/guards/roles.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)

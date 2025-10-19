@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Put, NotFoundException } from '@nestjs/common';
 import { ConstructorService } from '../services/constructor.service';
 import { PriceCalculatorService } from '../services/price-calculator.service';
 import { CreateCakeDesignDto, UpdateCakeDesignDto } from '../dto/cake-design.dto';
@@ -25,20 +25,27 @@ export class ConstructorController {
   // Дизайны тортов
   @Post()
   async create(@Body() createCakeDesignDto: CreateCakeDesignDto, @Request() req: any): Promise<CakeDesign> {
-    createCakeDesignDto.userId = req.user.id;
+    const designData = { ...createCakeDesignDto };
+    designData.userId = req.user.id;
+
     const priceResult = await this.priceCalculatorService.calculatePrice({
       sizeId: createCakeDesignDto.sizeId,
-      layers: createCakeDesignDto.layers,
+      layers: createCakeDesignDto.layers.map(id => ({ id, quantity: 1 })),
       fillings: [],
-      decorations: createCakeDesignDto.decorations || []
+      decorations: (createCakeDesignDto.decorations || []).map(id => ({ id, quantity: 1 }))
     });
-    return this.constructorService.create({
-      ...createCakeDesignDto,
+
+    const design = await this.constructorService.create({
+      ...designData,
       price: priceResult.totalPrice
     });
-  }
 
-  @Get()
+    if (!design) {
+      throw new Error('Failed to create cake design');
+    }
+
+    return design;
+  }  @Get()
   async findAll(): Promise<CakeDesign[]> {
     return this.constructorService.findAll();
   }
@@ -58,12 +65,25 @@ export class ConstructorController {
     @Param('id') id: string,
     @Body() updateCakeDesignDto: UpdateCakeDesignDto,
   ): Promise<CakeDesign> {
-    if (updateCakeDesignDto.layers) {
-      const price = await this.priceCalculatorService.calculatePrice({
-        layers: updateCakeDesignDto.layers,
-        decorations: updateCakeDesignDto.decorations
+    if (updateCakeDesignDto.layers || updateCakeDesignDto.decorations) {
+      const currentDesign = await this.constructorService.findOne(id);
+      if (!currentDesign) {
+        throw new NotFoundException('Cake design not found');
+      }
+
+      const priceResult = await this.priceCalculatorService.calculatePrice({
+        sizeId: (updateCakeDesignDto.sizeId || currentDesign.sizeId) as string,
+        layers: (updateCakeDesignDto.layers || currentDesign.layers).map(layerId => ({
+          id: typeof layerId === 'string' ? layerId : layerId.id,
+          quantity: 1
+        })),
+        fillings: [],
+        decorations: (updateCakeDesignDto.decorations || currentDesign.decorations || []).map(decorId => ({
+          id: typeof decorId === 'string' ? decorId : decorId.id,
+          quantity: 1
+        }))
       });
-      updateCakeDesignDto = { ...updateCakeDesignDto, price };
+      updateCakeDesignDto = { ...updateCakeDesignDto, price: priceResult.totalPrice };
     }
     return this.constructorService.update(id, updateCakeDesignDto);
   }

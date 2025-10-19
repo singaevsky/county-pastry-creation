@@ -8,6 +8,9 @@ export class Product {
   @Column({ length: 100 })
   name!: string;
 
+  @Column({ length: 100, unique: true })
+  slug!: string;
+
   @Column('text')
   description!: string;
 
@@ -16,6 +19,9 @@ export class Product {
 
   @Column('text', { array: true, nullable: true })
   images: string[] = [];
+
+  @Column({ default: true })
+  isActive!: boolean;
 
   @Column({ type: 'json', nullable: true })
   specifications: {

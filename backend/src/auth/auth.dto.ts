@@ -9,20 +9,20 @@ enum Role {
 
 export class RegisterDto {
   @IsEmail()
-  email: string;
+  email!: string;
 
   @MinLength(6)
   @IsString()
-  password: string;
+  password!: string;
 
   @IsEnum(Role)
-  role: Role;
+  role!: Role;
 }
 
 export class LoginDto {
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
-  password: string;
+  password!: string;
 }
